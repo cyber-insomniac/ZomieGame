@@ -1,5 +1,6 @@
 # menu.py
 import pygame
+import os
 
 class Button:
     def __init__(self, x, y, width, height, text, font):
@@ -45,13 +46,16 @@ class Menu:
         self.title = self.font_title.render("Zombie Game", True, (255, 200, 50))
 
         # Button Iniciation
-        self.btn_start = Button(110, 80, 100, 30, "Play", self.font_btn)
-        self.btn_quit = Button(110, 125, 100, 30, "Quit", self.font_btn)
+        self.btn_start = Button(110, 65, 100, 30, "Play", self.font_btn)
+        self.btn_leaderboard = Button(110, 100, 100, 30, "Leaderboard", self.font_btn)
+        self.btn_quit = Button(110, 135, 100, 30, "Quit", self.font_btn)
 
     def update(self, mouse_pos, mouse_clicked):
         # Button functions
         if self.btn_start.update(mouse_pos, mouse_clicked):
             return "START"
+        if self.btn_leaderboard.update(mouse_pos, mouse_clicked):
+            return "LEADERBOARD"
         if self.btn_quit.update(mouse_pos, mouse_clicked):
             return "QUIT"
         
@@ -64,4 +68,5 @@ class Menu:
         surface.blit(self.title, title_rect)
 
         self.btn_start.draw(surface)
+        self.btn_leaderboard.draw(surface)
         self.btn_quit.draw(surface)
