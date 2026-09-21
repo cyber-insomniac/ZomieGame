@@ -4,6 +4,7 @@ import sys
 
 # Importing classes
 from map_renderer import MapRenderer
+from menu import Menu
 
 
 WINDOW_SCALE = 3
@@ -14,40 +15,53 @@ class Game:
     def __init__(self):
         pygame.init()
         self.window = pygame.display.set_mode((WINDOW_W, WINDOW_H))
-        pygame.display.set_caption("Moje super hra")
+        pygame.display.set_caption("Zombie Game")
         self.internal_surface = pygame.Surface((INTERNAL_W, INTERNAL_H))
         self.clock = pygame.time.Clock()
         self.running = True
 
+        self.state = "MENU"  # Game state
+
         # Class initiation
         self.map = MapRenderer()
+        self.menu = Menu()
         
     def run(self):
         while self.running:
             dt = self.clock.tick(60) / 1000.0
+            
+            mouse_clicked = False
 
-            # Event Manager --------
+            # Event Manager -----
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     self.running = False
                 elif event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
                     self.running = False
+                elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+                    mouse_clicked = True
 
             keys = pygame.key.get_pressed()
+            
+            mx, my = pygame.mouse.get_pos()
+            scaled_mouse = (mx / WINDOW_SCALE, my / WINDOW_SCALE)
 
-            # Update Function --------
-            self.map.update(dt, keys)
+            # Draw and Update -----
+            if self.state == "MENU":
 
-            # FUTURE EXAMPLES vvvv
-            # self.player.update(dt, keys)
-            # self.enemies.update(dt)
+                action = self.menu.update(scaled_mouse, mouse_clicked)
+                
+                if action == "START":
+                    self.state = "GAME"
+                elif action == "QUIT":
+                    self.running = False
+                
+                self.menu.draw(self.internal_surface)
 
-            # Draw Function --------
-            self.map.draw(self.internal_surface)
+            elif self.state == "GAME":
+                self.map.update(dt, keys)
+                self.map.draw(self.internal_surface)
 
-            # FUTURE EXAMPLES vvvv
-            # self.player.draw(self.internal_surface)
-            # self.enemies.draw(self.internal_surface)
 
             # Window stuff idk
             scaled = pygame.transform.scale(self.internal_surface, (WINDOW_W, WINDOW_H))
