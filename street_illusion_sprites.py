@@ -101,6 +101,7 @@ class AnchoredSprite:
         self.anchor_frac = anchor_frac  # (fx, fy) within the cropped image
         # world-space width this sprite occupies at its reference depth
         self.world_width = self.image.get_width() * NEAR_Z_REF / FOCAL
+        print("abcd")
 
     def draw(self, surf, x_world, z, cam_x):
         sx, sy = project(x_world, z, cam_x)
