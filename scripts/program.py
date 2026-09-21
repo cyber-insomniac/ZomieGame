@@ -5,6 +5,7 @@ import sys
 # Importing classes
 from map_renderer import MapRenderer
 from menu import Menu
+from leaderboard import Leaderboard
 
 
 WINDOW_SCALE = 3
@@ -25,6 +26,7 @@ class Game:
         # Class initiation
         self.map = MapRenderer()
         self.menu = Menu()
+        self.leaderboard = Leaderboard()
         
     def run(self):
         while self.running:
@@ -48,15 +50,24 @@ class Game:
 
             # Draw and Update -----
             if self.state == "MENU":
-
                 action = self.menu.update(scaled_mouse, mouse_clicked)
                 
                 if action == "START":
                     self.state = "GAME"
+                elif action == "LEADERBOARD":
+                    self.state = "LEADERBOARD"
                 elif action == "QUIT":
                     self.running = False
                 
                 self.menu.draw(self.internal_surface)
+
+            elif self.state == "LEADERBOARD":
+                action = self.leaderboard.update(scaled_mouse, mouse_clicked)
+
+                if action == "BACK":
+                    self.state = "MENU"
+
+                self.leaderboard.draw(self.internal_surface)
 
             elif self.state == "GAME":
                 self.map.update(dt, keys)
