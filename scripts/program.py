@@ -6,6 +6,8 @@ import sys
 from map_renderer import MapRenderer
 from menu import Menu
 from leaderboard import Leaderboard
+from enemy_spawner import EnemySpawner
+from ability_spawner import AbilitySpawner
 
 
 WINDOW_SCALE = 3
@@ -27,6 +29,8 @@ class Game:
         self.map = MapRenderer()
         self.menu = Menu()
         self.leaderboard = Leaderboard()
+        self.enemyspawner = EnemySpawner()
+        self.abilityspawner = AbilitySpawner()
         
     def run(self):
         while self.running:
@@ -73,6 +77,11 @@ class Game:
                 self.map.update(dt, keys)
                 self.map.draw(self.internal_surface)
 
+                self.enemyspawner.update(dt)
+                self.enemyspawner.draw(self.internal_surface)
+
+                self.abilityspawner.update(dt)
+                self.abilityspawner.draw(self.internal_surface)
 
             # Window stuff idk
             scaled = pygame.transform.scale(self.internal_surface, (WINDOW_W, WINDOW_H))
