@@ -26,13 +26,14 @@ class ability:
 
     angle = 0
 
-    def __init__(self, x, y, width, height, health, damage):
+    def __init__(self, x, y, width, height, ability_name):
 
         self.rect = pygame.Rect(x, y, width, height)
         self.y = y
         self.x = x
         self.height = height
         self.width = width
+        self.ability_name = ability_name
 
     def update(self, dt):   
         # Move ability closer over time

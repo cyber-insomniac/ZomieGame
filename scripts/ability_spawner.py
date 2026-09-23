@@ -5,6 +5,9 @@ import math
 from ability import ability
 
 class AbilitySpawner:
+
+    abilityTypes = ["double_damage", "insta_kill", "granade"]
+
     def __init__(self):
         self.abilities = []
 
@@ -14,7 +17,7 @@ class AbilitySpawner:
     def spawn_ability(self):
         random_x = random.uniform(-2, 2)
 
-        new_ability = ability(random_x, 0, 50, 50, 10, 10)
+        new_ability = ability(random_x, 0, 50, 50, "granade")
         self.abilities.append(new_ability)
 
     def update(self, dt):
@@ -28,7 +31,7 @@ class AbilitySpawner:
         for e in self.abilities:
             e.update(dt)  
 
-        self.abilities = [a for a in self.abilities if e.distance >= 2]
+        self.abilities = [a for a in self.abilities if a.distance >= 2]
 
     def draw(self, surface):
         for a in self.abilities:
