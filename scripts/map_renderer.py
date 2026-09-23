@@ -80,12 +80,14 @@ class Receding:
 # Constructor
 class MapRenderer:
     def __init__(self):
-        self.street_img = pygame.image.load(find_asset("street.png")).convert_alpha()
+        self.street_img = pygame.image.load(find_asset("street2.png")).convert_alpha()
         self.ui_img = pygame.image.load(find_asset("UI.png")).convert_alpha()
+        self.backgroundImg = pygame.image.load(find_asset("Backgroundblue_with_MOON2.png"))
 
-        building_l = AnchoredSprite(find_asset("buildingL.png"), anchor_frac=(0.234, 1.0))
-        building_r = AnchoredSprite(find_asset("buildingR.png"), anchor_frac=(0.75, 1.0))
-        dash = AnchoredSprite(find_asset("streetline.png"), anchor_frac=(0.5, 1.0))
+        building_l = AnchoredSprite(find_asset("buildingL2.png"), anchor_frac=(0.234, 1.0))
+        building_r = AnchoredSprite(find_asset("buildingR2.png"), anchor_frac=(0.75, 1.0))
+        dash = AnchoredSprite(find_asset("streetline2.png"), anchor_frac=(0.5, 1.0))
+        
 
         self.left_row = Receding(building_l, -STREET_HALF_WIDTH, building_l.world_width * BUILDING_OVERLAP)
         self.right_row = Receding(building_r, STREET_HALF_WIDTH, building_r.world_width * BUILDING_OVERLAP)
@@ -103,7 +105,7 @@ class MapRenderer:
         self.dash_row.update(dz)
 
     def draw(self, surface):
-        surface.fill(SKY_COLOR)
+        surface.blit(self.backgroundImg, (0,0))
         surface.blit(self.street_img, (0, 0))
         
         # We pass self.cam_x (which is always 0.0) so the perspective calculations still work
