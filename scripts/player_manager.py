@@ -27,15 +27,24 @@ class Player_manager:
                     case pygame.K_l: # Light hit
                         for enemy in EnemySpawner.enemies:
                             if pygame.Rect.colliderect(enemy.rect, self.rect):
-                                enemy.health -= self.sword_damage[0] if self.weapon == 0 else self.gun_damage[0]
+                                if(self.weapon == 0):
+                                    self.swing_sword(0,enemy)
+                                else:
+                                    self.shoot_gun(0, enemy)
                     case pygame.K_m: # Medium hit
                         for enemy in EnemySpawner.enemies:
                             if pygame.Rect.colliderect(enemy.rect, self.rect):
-                                enemy.health -= self.sword_damage[1] if self.weapon == 0 else self.gun_damage[1]
+                                if(self.weapon == 0):
+                                    self.swing_sword(1,enemy)
+                                else:
+                                    self.shoot_gun(1, enemy)
                     case pygame.K_h: # Hard hit
                         for enemy in EnemySpawner.enemies:
                             if pygame.Rect.colliderect(enemy.rect, self.rect):
-                                enemy.health -= self.sword_damage[2] if self.weapon == 0 else self.gun_damage[2]
+                                if(self.weapon == 0):
+                                    self.swing_sword(1,enemy)
+                                else:
+                                    self.shoot_gun(1, enemy)
 
         if(self.weapon == 0):
             self.rect.width = self.sword_rect[0]
@@ -60,6 +69,15 @@ class Player_manager:
         # Health Indicator
         health_text = self.font.render(f"{self.health}/100", False, (0, 0, 0))
         surface.blit(health_text, (100,200))
+
+    def swing_sword(self, amount, enemy):
+        if(enemy.distance < 8):
+            enemy.health -= self.sword_damage[amount]
+
+    def shoot_gun(self, amount, enemy):
+        for i in range(amount + 1):
+            enemy.health -= self.gun_damage
+
 
         
  

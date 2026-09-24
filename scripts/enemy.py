@@ -37,6 +37,8 @@ class Enemy:
         self.width = width
         self.damage = damage
         self.health = health
+        self.ZOMBIE_IMAGE_FULL = pygame.image.load("assets/Zombie.png").convert_alpha()
+        self.ZOMBIE_IMAGE_HALF = pygame.image.load("assets/Zombie_took_hits.png").convert_alpha()
  
     def update(self, dt):  
         # Move enemy closer over time
@@ -59,8 +61,14 @@ class Enemy:
             self.deal_damage()
  
     def draw(self, surface):
-        color = (255, 255, 255)
-        pygame.draw.rect(surface, color, self.rect)
+        # Choose sprite based on health
+        current_image = self.ZOMBIE_IMAGE_FULL if self.health > 50 else self.ZOMBIE_IMAGE_HALF
+
+        # Scale the image to match the updated rectangle size
+        scaled_image = pygame.transform.scale(current_image, (self.rect.width, self.rect.height))
+
+        # Render scaled image to the surface
+        surface.blit(scaled_image, self.rect)
  
     def deal_damage(self):
         if self.distance <= 2:

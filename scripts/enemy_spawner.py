@@ -16,7 +16,7 @@ class EnemySpawner:
 
   def spawn_enemy(self):
     random_x = random.uniform(-2, 2)
-    new_enemy = Enemy(random_x, 0, 50, 150, 100, 10)
+    new_enemy = Enemy(random_x, 0, 38 * 3, 60 * 3, 100, 10)
     # Přidáváme do třídního seznamu
     EnemySpawner.enemies.append(new_enemy)
 

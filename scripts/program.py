@@ -17,6 +17,7 @@ WINDOW_W, WINDOW_H = INTERNAL_W * WINDOW_SCALE, INTERNAL_H * WINDOW_SCALE
 
 
 
+
 class Game:
     def __init__(self):
         pygame.init()
