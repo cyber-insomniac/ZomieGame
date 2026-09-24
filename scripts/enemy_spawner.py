@@ -7,7 +7,6 @@ from enemy import Enemy
 
 
 class EnemySpawner:
-  # Statická (třídní) proměnná – sdílená pro celou třídu
   enemies = []
 
   def __init__(self):
@@ -27,13 +26,7 @@ class EnemySpawner:
       self.spawn_enemy()
       self.spawn_timer = 0.0
 
-    # Procházíme třídní seznam
     for e in EnemySpawner.enemies:
       e.update(dt)
 
-    # Filtrujeme třídní seznam
     EnemySpawner.enemies = [e for e in EnemySpawner.enemies if e.distance >= 2 and e.health > 0]
-
-  def draw(self, surface):
-    for e in EnemySpawner.enemies:
-      e.draw(surface)

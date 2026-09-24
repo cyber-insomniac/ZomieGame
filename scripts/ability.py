@@ -34,6 +34,7 @@ class ability:
         self.height = height
         self.width = width
         self.ability_name = ability_name
+        self.pickedUp = False
 
     def update(self, dt):   
         # Move ability closer over time

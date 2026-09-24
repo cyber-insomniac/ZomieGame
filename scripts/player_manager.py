@@ -2,6 +2,7 @@ import pygame
 
 from events import ENEMY_DAMAGE_EVENT
 from enemy_spawner import EnemySpawner
+from ability_spawner import AbilitySpawner
 
 WINDOW_SCALE = 3
  
@@ -11,11 +12,11 @@ class Player_manager:
         self.gun_damage = 10
         self.sword_damage = [20,40,60]
         self.rect = pygame.Rect(0,0,3,3)
-        self.gun_rect = [3,3]
+        self.gun_rect = [10,10]
         self.sword_rect = [50,20]
         self.font = pygame.font.SysFont("Arial", 16)
 
-        self.weapon = 0 # 0 = SWORD | 1 = GUN
+        self.weapon = 1 # 0 = SWORD | 1 = GUN
 
     def update(self, dt, events):
 
@@ -45,6 +46,11 @@ class Player_manager:
                                     self.swing_sword(1,enemy)
                                 else:
                                     self.shoot_gun(1, enemy)
+                    case pygame.K_a:
+                        for ability in AbilitySpawner.abilities:
+                            if pygame.Rect.colliderect(ability.rect, self.rect):
+                                if ability.distance < 5:
+                                    ability.pickedUp = True
 
         if(self.weapon == 0):
             self.rect.width = self.sword_rect[0]

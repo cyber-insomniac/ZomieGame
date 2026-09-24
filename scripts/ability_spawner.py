@@ -5,12 +5,10 @@ import math
 from ability import ability
 
 class AbilitySpawner:
-
-    abilityTypes = ["double_damage", "insta_kill", "granade"]
+    abilities = []
+    abilityTypes = ["double_damage", "insta_kill", "granade", "bomb", "dynamite"]
 
     def __init__(self):
-        self.abilities = []
-
         self.spawn_timer = 0.0
         self.spawn_delay = 15.05251
 
@@ -18,7 +16,7 @@ class AbilitySpawner:
         random_x = random.uniform(-2, 2)
 
         new_ability = ability(random_x, 0, 50, 50, "granade")
-        self.abilities.append(new_ability)
+        AbilitySpawner.abilities.append(new_ability)
 
     def update(self, dt):
 
@@ -28,11 +26,8 @@ class AbilitySpawner:
             self.spawn_ability()
             self.spawn_timer = 0.0 
 
-        for e in self.abilities:
+        for e in AbilitySpawner.abilities:
             e.update(dt)  
 
-        self.abilities = [a for a in self.abilities if a.distance >= 2]
+        AbilitySpawner.abilities = [a for a in AbilitySpawner.abilities if a.distance >= 2 and not a.pickedUp]
 
-    def draw(self, surface):
-        for a in self.abilities:
-            a.draw(surface)
