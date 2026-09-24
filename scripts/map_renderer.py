@@ -12,8 +12,7 @@ STREET_HALF_WIDTH = 2.2
 NEAR_Z_REF = 1.0
 MIN_Z = 0.08
 FAR_Z = 15.0
-FORWARD_SPEED = 3.0
-STRAFE_SPEED = 1.6
+FORWARD_SPEED = 0.7
 SKY_COLOR = (25, 20, 40)
 BUILDING_OVERLAP = 0.85
 DASH_SPACING = 2.0
@@ -78,43 +77,38 @@ class Receding:
 
 
 # Constuctor
+# Constructor
 class MapRenderer:
     def __init__(self):
-        self.street_img = pygame.image.load(find_asset("street.png")).convert_alpha()
+        self.street_img = pygame.image.load(find_asset("street2.png")).convert_alpha()
         self.ui_img = pygame.image.load(find_asset("UI.png")).convert_alpha()
+        self.backgroundImg = pygame.image.load(find_asset("Backgroundblue_with_MOON2.png"))
 
-        building_l = AnchoredSprite(find_asset("buildingL.png"), anchor_frac=(0.234, 1.0))
-        building_r = AnchoredSprite(find_asset("buildingR.png"), anchor_frac=(0.75, 1.0))
-        dash = AnchoredSprite(find_asset("streetline.png"), anchor_frac=(0.5, 1.0))
+        building_l = AnchoredSprite(find_asset("buildingL2.png"), anchor_frac=(0.234, 1.0))
+        building_r = AnchoredSprite(find_asset("buildingR2.png"), anchor_frac=(0.75, 1.0))
+        dash = AnchoredSprite(find_asset("streetline2.png"), anchor_frac=(0.5, 1.0))
+        
 
         self.left_row = Receding(building_l, -STREET_HALF_WIDTH, building_l.world_width * BUILDING_OVERLAP)
         self.right_row = Receding(building_r, STREET_HALF_WIDTH, building_r.world_width * BUILDING_OVERLAP)
         self.dash_row = Receding(dash, 0.0, DASH_SPACING)
 
+        # We keep cam_x initialized to 0.0 so we can still pass it to the draw 
+        # functions and enemy spawner without causing errors, but it will never change.
         self.cam_x = 0.0
         self.speed = FORWARD_SPEED
 
     def update(self, dt, keys):
-        if keys[pygame.K_LEFT] or keys[pygame.K_a]:
-            self.cam_x -= STRAFE_SPEED * dt
-        if keys[pygame.K_RIGHT] or keys[pygame.K_d]:
-            self.cam_x += STRAFE_SPEED * dt
-            
-        self.cam_x = max(-STREET_HALF_WIDTH * 0.8, min(STREET_HALF_WIDTH * 0.8, self.cam_x))
-        
-        if keys[pygame.K_UP] or keys[pygame.K_w]:
-            self.speed = min(self.speed + 3 * dt, 9)
-        if keys[pygame.K_DOWN] or keys[pygame.K_s]:
-            self.speed = max(self.speed - 3 * dt, 0.5)
-
         dz = self.speed * dt
         self.left_row.update(dz)
         self.right_row.update(dz)
         self.dash_row.update(dz)
 
     def draw(self, surface):
-        surface.fill(SKY_COLOR)
+        surface.blit(self.backgroundImg, (0,0))
         surface.blit(self.street_img, (0, 0))
+        
+        # We pass self.cam_x (which is always 0.0) so the perspective calculations still work
         self.dash_row.draw(surface, self.cam_x)
         self.left_row.draw(surface, self.cam_x)
         self.right_row.draw(surface, self.cam_x)

@@ -6,11 +6,18 @@ import sys
 from map_renderer import MapRenderer
 from menu import Menu
 from leaderboard import Leaderboard
+from enemy_spawner import EnemySpawner
+from ability_spawner import AbilitySpawner
+from player_manager import Player_manager
+from rendering_manager import RenderingManager
 
 
 WINDOW_SCALE = 3
 INTERNAL_W, INTERNAL_H = 320, 180
 WINDOW_W, WINDOW_H = INTERNAL_W * WINDOW_SCALE, INTERNAL_H * WINDOW_SCALE
+
+
+
 
 class Game:
     def __init__(self):
@@ -20,6 +27,7 @@ class Game:
         self.internal_surface = pygame.Surface((INTERNAL_W, INTERNAL_H))
         self.clock = pygame.time.Clock()
         self.running = True
+        
 
         self.state = "MENU"  # Game state
 
@@ -27,6 +35,10 @@ class Game:
         self.map = MapRenderer()
         self.menu = Menu()
         self.leaderboard = Leaderboard()
+        self.enemyspawner = EnemySpawner()
+        self.abilityspawner = AbilitySpawner()
+        self.player_manager = Player_manager()
+        self.rendering_manager = RenderingManager()
         
     def run(self):
         while self.running:
@@ -35,13 +47,15 @@ class Game:
             mouse_clicked = False
 
             # Event Manager -----
-            for event in pygame.event.get():
+            events = pygame.event.get()
+            for event in events:
                 if event.type == pygame.QUIT:
                     self.running = False
                 elif event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
-                    self.running = False
+                    self.state = "MENU"
                 elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                     mouse_clicked = True
+                
 
             keys = pygame.key.get_pressed()
             
@@ -50,6 +64,7 @@ class Game:
 
             # Draw and Update -----
             if self.state == "MENU":
+                pygame.mouse.set_visible(True)
                 action = self.menu.update(scaled_mouse, mouse_clicked)
                 
                 if action == "START":
@@ -62,6 +77,7 @@ class Game:
                 self.menu.draw(self.internal_surface)
 
             elif self.state == "LEADERBOARD":
+                pygame.mouse.set_visible(True)
                 action = self.leaderboard.update(scaled_mouse, mouse_clicked)
 
                 if action == "BACK":
@@ -70,9 +86,18 @@ class Game:
                 self.leaderboard.draw(self.internal_surface)
 
             elif self.state == "GAME":
+                pygame.mouse.set_visible(False)
                 self.map.update(dt, keys)
                 self.map.draw(self.internal_surface)
 
+                self.enemyspawner.update(dt)
+
+                self.abilityspawner.update(dt)
+
+                self.rendering_manager.draw(self.internal_surface)
+
+                self.player_manager.update(dt, events)
+                self.player_manager.draw(self.internal_surface)
 
             # Window stuff idk
             scaled = pygame.transform.scale(self.internal_surface, (WINDOW_W, WINDOW_H))
