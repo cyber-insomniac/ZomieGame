@@ -8,15 +8,20 @@ WINDOW_SCALE = 3
  
 class Player_manager:
     def __init__(self):
-        self.health = 100
+        self.health = 10
         self.gun_damage = 10
         self.sword_damage = [20,40,60]
         self.rect = pygame.Rect(0,0,3,3)
         self.gun_rect = [10,10]
         self.sword_rect = [50,20]
-        self.font = pygame.font.SysFont("Arial", 16)
+        
 
-        self.weapon = 0 # 0 = SWORD | 1 = GUN
+        self.SLASH_IMAGE = pygame.image.load("assets/slash.png").convert_alpha()
+        self.CROSSHAIR_IMAGE = pygame.image.load("assets/crosshair.png").convert_alpha()
+
+        self.HEARTH_IMAGE = pygame.image.load("assets/Hearts.png")
+
+        self.weapon = 1 # 0 = SWORD | 1 = GUN
 
     def update(self, dt, events):
 
@@ -65,16 +70,18 @@ class Player_manager:
 
     def draw(self, surface):
         # Target
-        color = (255, 0, 0)
-        pygame.draw.rect(surface, color, self.rect)
+        current_image = self.SLASH_IMAGE if self.weapon == 0 else self.CROSSHAIR_IMAGE
+        scaled_image = pygame.transform.scale(current_image, (self.rect.width, self.rect.height))
+        surface.blit(scaled_image, self.rect)
 
         # Weapon Indicator
-        weapon_text = self.font.render("Sword" if self.weapon == 0 else "Gun", False, (0, 0, 0))
-        surface.blit(weapon_text, (10,150))
 
         # Health Indicator
-        health_text = self.font.render(f"{self.health}/100", False, (0, 0, 0))
-        surface.blit(health_text, (100,200))
+        for x in range(self.health):
+            surface.blit(self.HEARTH_IMAGE, (x * 14 + 10, 148))
+        
+
+
 
     def swing_sword(self, amount, enemy):
         if(enemy.distance < 8):
