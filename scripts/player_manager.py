@@ -16,7 +16,7 @@ class Player_manager:
         self.sword_rect = [50,20]
         self.font = pygame.font.SysFont("Arial", 16)
 
-        self.weapon = 1 # 0 = SWORD | 1 = GUN
+        self.weapon = 0 # 0 = SWORD | 1 = GUN
 
     def update(self, dt, events):
 
@@ -46,7 +46,7 @@ class Player_manager:
                                     self.swing_sword(1,enemy)
                                 else:
                                     self.shoot_gun(1, enemy)
-                    case pygame.K_a:
+                    case pygame.K_e:
                         for ability in AbilitySpawner.abilities:
                             if pygame.Rect.colliderect(ability.rect, self.rect):
                                 if ability.distance < 5:
