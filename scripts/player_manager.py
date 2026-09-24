@@ -4,7 +4,7 @@ from events import ENEMY_DAMAGE_EVENT
 from enemy_spawner import EnemySpawner
 from ability_spawner import AbilitySpawner
 
-WINDOW_SCALE = 3
+WINDOW_SCALE = 4
  
 class Player_manager:
     def __init__(self):
@@ -19,9 +19,12 @@ class Player_manager:
         self.SLASH_IMAGE = pygame.image.load("assets/slash.png").convert_alpha()
         self.CROSSHAIR_IMAGE = pygame.image.load("assets/crosshair.png").convert_alpha()
 
+        self.SWORD_IMAGE = pygame.image.load("assets/sword.png").convert_alpha()
+        self.GUN_IMAGE = pygame.image.load("assets/Ak47.png").convert_alpha()
+
         self.HEARTH_IMAGE = pygame.image.load("assets/Hearts.png")
 
-        self.weapon = 1 # 0 = SWORD | 1 = GUN
+        self.weapon = 0 # 0 = SWORD | 1 = GUN
 
     def update(self, dt, events):
 
@@ -43,14 +46,14 @@ class Player_manager:
                                 if(self.weapon == 0):
                                     self.swing_sword(1,enemy)
                                 else:
-                                    self.shoot_gun(1, enemy)
+                                    self.shoot_gun(2, enemy)
                     case pygame.K_h: # Hard hit
                         for enemy in EnemySpawner.enemies:
                             if pygame.Rect.colliderect(enemy.rect, self.rect):
                                 if(self.weapon == 0):
-                                    self.swing_sword(1,enemy)
+                                    self.swing_sword(2,enemy)
                                 else:
-                                    self.shoot_gun(1, enemy)
+                                    self.shoot_gun(5, enemy)
                     case pygame.K_e:
                         for ability in AbilitySpawner.abilities:
                             if pygame.Rect.colliderect(ability.rect, self.rect):
@@ -75,6 +78,8 @@ class Player_manager:
         surface.blit(scaled_image, self.rect)
 
         # Weapon Indicator
+        weapon_image = self.SWORD_IMAGE if self.weapon == 0 else self.GUN_IMAGE
+        surface.blit(weapon_image, (216, 148))
 
         # Health Indicator
         for x in range(self.health):
@@ -92,5 +97,12 @@ class Player_manager:
             enemy.health -= self.gun_damage
 
 
-        
+    ##### TODO #####
+    # Magazine/Ammo
+    # Abilities
+    # Score
+    # Menu
+    # Art
+    # Gameover state
+    # !!!!BALANCING!!!!
  

@@ -12,7 +12,7 @@ from player_manager import Player_manager
 from rendering_manager import RenderingManager
 
 
-WINDOW_SCALE = 3
+WINDOW_SCALE = 4
 INTERNAL_W, INTERNAL_H = 320, 180
 WINDOW_W, WINDOW_H = INTERNAL_W * WINDOW_SCALE, INTERNAL_H * WINDOW_SCALE
 
@@ -53,7 +53,7 @@ class Game:
                     self.running = False
                 elif event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
                     self.state = "MENU"
-                elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+                elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1 or event.type == pygame.KEYDOWN and event.key == pygame.K_e:
                     mouse_clicked = True
                 
 
