@@ -1,6 +1,6 @@
 import pygame
 
-from events import ENEMY_DAMAGE_EVENT
+from events import ENEMY_DAMAGE_EVENT, ABILITY_PICKEDUP_EVENT
 from enemy_spawner import EnemySpawner
 from ability_spawner import AbilitySpawner
 
@@ -58,6 +58,8 @@ class Player_manager:
                         for ability in AbilitySpawner.abilities:
                             if pygame.Rect.colliderect(ability.rect, self.rect):
                                 if ability.distance < 5:
+                                    ev = pygame.event.Event(ABILITY_PICKEDUP_EVENT, {"name": ability.ability_name, "image": ability.current_image})
+                                    pygame.event.post(ev)
                                     ability.pickedUp = True
 
         if(self.weapon == 0):

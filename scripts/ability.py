@@ -36,6 +36,10 @@ class ability:
         self.ability_name = ability_name
         self.pickedUp = False
 
+        self.BOMB_IMAGE = pygame.image.load("assets/bomb.png")
+        self.DYNAMITE_IMAGE = pygame.image.load("assets/dynamite.png")
+        self.GRANADE_IMAGE = pygame.image.load("assets/grenade.png")
+
     def update(self, dt):   
         # Move ability closer over time
             self.distance -= self.speed * dt
@@ -55,7 +59,23 @@ class ability:
             self.rect.center = (scaled_x, scaled_y)
 
     def draw(self, surface):
-        color = (0, 255, 0)
-        pygame.draw.rect(surface, color, self.rect)
+        self.current_image = None
+
+        if self.ability_name == "granade":
+            self.current_image = self.GRANADE_IMAGE
+        elif self.ability_name == "dynamite":
+            self.current_image = self.DYNAMITE_IMAGE
+        elif self.ability_name == "bomb":
+            self.current_image = self.BOMB_IMAGE
+        else:
+             color = (0,255,0)
+
+        if self.current_image != None:
+             scaled_image = pygame.transform.scale(self.current_image, (self.rect.width, self.rect.height))
+             surface.blit(scaled_image, self.rect)
+        else:       
+            pygame.draw.rect(surface, color, self.rect)
+
+        
 
 
