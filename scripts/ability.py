@@ -38,7 +38,7 @@ class ability:
 
         self.BOMB_IMAGE = pygame.image.load("assets/bomb.png")
         self.DYNAMITE_IMAGE = pygame.image.load("assets/dynamite.png")
-        self.GRANADE_IMAGE = pygame.image.load("assets/grenade.png")
+        self.GRENADE_IMAGE = pygame.image.load("assets/grenade.png")
 
     def update(self, dt):   
         # Move ability closer over time
@@ -61,8 +61,8 @@ class ability:
     def draw(self, surface):
         self.current_image = None
 
-        if self.ability_name == "granade":
-            self.current_image = self.GRANADE_IMAGE
+        if self.ability_name == "grenade":
+            self.current_image = self.GRENADE_IMAGE
         elif self.ability_name == "dynamite":
             self.current_image = self.DYNAMITE_IMAGE
         elif self.ability_name == "bomb":

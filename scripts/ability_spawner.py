@@ -6,7 +6,7 @@ from ability import ability
 
 class AbilitySpawner:
     abilities = []
-    abilityTypes = ["double_damage", "insta_kill", "granade", "bomb", "dynamite"]
+    abilityTypes = ["double_damage", "insta_kill", "grenade", "bomb", "dynamite"]
 
     def __init__(self):
         self.spawn_timer = 0.0
