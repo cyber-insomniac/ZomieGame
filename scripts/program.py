@@ -10,6 +10,7 @@ from enemy_spawner import EnemySpawner
 from ability_spawner import AbilitySpawner
 from player_manager import Player_manager
 from rendering_manager import RenderingManager
+from ability_manager import AbilityManager
 
 
 WINDOW_SCALE = 4
@@ -39,6 +40,7 @@ class Game:
         self.abilityspawner = AbilitySpawner()
         self.player_manager = Player_manager()
         self.rendering_manager = RenderingManager()
+        self.abilitymanager = AbilityManager()
         
     def run(self):
         while self.running:
@@ -93,6 +95,8 @@ class Game:
                 self.enemyspawner.update(dt)
 
                 self.abilityspawner.update(dt)
+                self.abilitymanager.update(dt, events)
+                self.abilitymanager.draw(self.internal_surface)
 
                 self.rendering_manager.draw(self.internal_surface)
 

@@ -1,0 +1,9 @@
+{
+    "image_path" : "assets/bomb.png",
+
+    "speed_z": 3.0,
+    "speed_y": 1.0,
+
+    "radius": 6.0,
+    "damage": 100
+}
