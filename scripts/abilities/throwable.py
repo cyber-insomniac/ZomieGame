@@ -1,9 +1,11 @@
 import pygame
 import math
+import json
+import os
 
 from enemy_spawner import EnemySpawner
 
-class Grenade:
+class Throwable:
 
     VANISH_X = 160
     VANISH_Y = 32
@@ -11,14 +13,22 @@ class Grenade:
     CAM_HEIGHT = 1.533
     NEAR_Z_REF = 1.0
     
-    def __init__(self, x_start):
+    def __init__(self, x_start, json_path):
+
+        current_dir = os.path.dirname(os.path.abspath(__file__))
+        
+        file_path = os.path.join(current_dir, json_path)
+        
+        with open(file_path, "r", encoding="utf-8") as json_file:
+            self.data = json.load(json_file)
+
         self.x = x_start
         self.y = 1.5          
         self.distance = 0.5
 
         # Throw
-        self.speed_z = 6.0
-        self.speed_y = 3.0 
+        self.speed_z = self.data["speed_z"]
+        self.speed_y = self.data["speed_y"]
         self.gravity = 15.0 
 
         self.width = 15
@@ -28,7 +38,7 @@ class Grenade:
         self.exploded = False
         self.active = True
 
-        self.image = pygame.image.load("assets/grenade.png").convert_alpha()
+        self.image = pygame.image.load(self.data["image_path"]).convert_alpha()
 
     def update(self, dt):
         if not self.active:
@@ -46,7 +56,7 @@ class Grenade:
 
         # Fake perspective
         z = max(self.distance, 0.001)
-        scale = (self.NEAR_Z_REF / z) * 3.0
+        scale = (self.NEAR_Z_REF / z) * 2.0
         
         scaled_width = self.width * scale
         scaled_height = self.height * scale
@@ -66,8 +76,8 @@ class Grenade:
         # Explosion config
         explosion_data = {
             "z": self.distance, 
-            "radius": 4.0,
-            "damage": 60
+            "radius": self.data["radius"],
+            "damage": self.data["damage"]
         }
         self.explosion(explosion_data)
 

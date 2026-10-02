@@ -1,8 +1,12 @@
 import pygame
+import json
 
 from events import ENEMY_DAMAGE_EVENT, ABILITY_PICKEDUP_EVENT
 from enemy_spawner import EnemySpawner
 from ability_spawner import AbilitySpawner
+
+from weapons.guns.gun import Gun
+from weapons.melees.melee import Melee
 
 WINDOW_SCALE = 4
  
@@ -10,21 +14,23 @@ class Player_manager:
     def __init__(self):
         self.health = 10
         self.gun_damage = 10
-        self.sword_damage = [20,40,60]
+        self.melee_damage = [20,40,60]
         self.rect = pygame.Rect(0,0,3,3)
         self.gun_rect = [10,10]
-        self.sword_rect = [50,20]
-        
+        self.melee_rect = [50,20]
 
+        with open("scripts/weapons/melees/sword.json", "r", encoding="utf-8") as json_file: # STARTING WEAPON
+            self.weapon_data = json.load(json_file)
+        
         self.SLASH_IMAGE = pygame.image.load("assets/slash.png").convert_alpha()
         self.CROSSHAIR_IMAGE = pygame.image.load("assets/crosshair.png").convert_alpha()
 
-        self.SWORD_IMAGE = pygame.image.load("assets/sword.png").convert_alpha()
+        self.MELEE_IMAGE = pygame.image.load("assets/sword.png").convert_alpha()
         self.GUN_IMAGE = pygame.image.load("assets/Ak47.png").convert_alpha()
 
         self.HEARTH_IMAGE = pygame.image.load("assets/Hearts.png")
 
-        self.weapon = 0 # 0 = SWORD | 1 = GUN
+        self.weapon = 0 # 0 = MELEE | 1 = GUN
 
     def update(self, dt, events):
 
@@ -37,21 +43,21 @@ class Player_manager:
                         for enemy in EnemySpawner.enemies:
                             if pygame.Rect.colliderect(enemy.rect, self.rect):
                                 if(self.weapon == 0):
-                                    self.swing_sword(0,enemy)
+                                    self.swing_melee(0,enemy)
                                 else:
                                     self.shoot_gun(0, enemy)
                     case pygame.K_m: # Medium hit
                         for enemy in EnemySpawner.enemies:
                             if pygame.Rect.colliderect(enemy.rect, self.rect):
                                 if(self.weapon == 0):
-                                    self.swing_sword(1,enemy)
+                                    self.swing_melee(1,enemy)
                                 else:
                                     self.shoot_gun(2, enemy)
                     case pygame.K_h: # Hard hit
                         for enemy in EnemySpawner.enemies:
                             if pygame.Rect.colliderect(enemy.rect, self.rect):
                                 if(self.weapon == 0):
-                                    self.swing_sword(2,enemy)
+                                    self.swing_melee(2,enemy)
                                 else:
                                     self.shoot_gun(5, enemy)
                     case pygame.K_e:
@@ -63,8 +69,8 @@ class Player_manager:
                                     ability.pickedUp = True
 
         if(self.weapon == 0):
-            self.rect.width = self.sword_rect[0]
-            self.rect.height = self.sword_rect[1]
+            self.rect.width = self.melee_rect[0]
+            self.rect.height = self.melee_rect[1]
         else:
             self.rect.width = self.gun_rect[0]
             self.rect.height = self.gun_rect[1]
@@ -80,7 +86,7 @@ class Player_manager:
         surface.blit(scaled_image, self.rect)
 
         # Weapon Indicator
-        weapon_image = self.SWORD_IMAGE if self.weapon == 0 else self.GUN_IMAGE
+        weapon_image = self.MELEE_IMAGE if self.weapon == 0 else self.GUN_IMAGE
         surface.blit(weapon_image, (216, 148))
 
         # Health Indicator
@@ -90,9 +96,9 @@ class Player_manager:
 
 
 
-    def swing_sword(self, amount, enemy):
+    def swing_melee(self, amount, enemy):
         if(enemy.distance < 8):
-            enemy.health -= self.sword_damage[amount]
+            enemy.health -= self.melee_damage[amount]
 
     def shoot_gun(self, amount, enemy):
         for i in range(amount + 1):

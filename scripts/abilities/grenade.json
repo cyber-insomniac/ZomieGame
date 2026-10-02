@@ -1,0 +1,9 @@
+{
+    "image_path" : "assets/grenade.png",
+
+    "speed_z": 6.0,
+    "speed_y": 3.0,
+
+    "radius": 4.0,
+    "damage": 80
+}
