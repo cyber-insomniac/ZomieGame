@@ -56,18 +56,22 @@ class Throwable:
 
         # Fake perspective
         z = max(self.distance, 0.001)
-        scale = (self.NEAR_Z_REF / z) * 2.0
-        
+        scale = (self.NEAR_Z_REF / z) * 3.0
+         
+        # Calculate scale multiplier based on depth (Z)
+        scale = self.NEAR_Z_REF / z
         scaled_width = self.width * scale
         scaled_height = self.height * scale
 
         cam_x = 0.0
         scaled_x = self.VANISH_X + self.FOCAL * (self.x - cam_x) / z
+        
         scaled_y = self.VANISH_Y + self.FOCAL * (self.CAM_HEIGHT - self.y) / z
 
         self.rect.width = max(1, int(scaled_width))
         self.rect.height = max(1, int(scaled_height))
-        self.rect.midbottom = (int(scaled_x), int(scaled_y))
+        
+        self.rect.center = (int(scaled_x), int(scaled_y))
 
     def explode(self):
         self.exploded = True

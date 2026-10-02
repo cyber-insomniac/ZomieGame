@@ -5,12 +5,12 @@ from events import ENEMY_DAMAGE_EVENT, ABILITY_PICKEDUP_EVENT
 from enemy_spawner import EnemySpawner
 from ability_spawner import AbilitySpawner
 
-from weapons.guns.gun import Gun
-from weapons.melees.melee import Melee
-
 WINDOW_SCALE = 4
  
 class Player_manager:
+
+    damage_multiplier = 1.0
+
     def __init__(self):
         self.health = 10
         self.gun_damage = 10
@@ -43,23 +43,23 @@ class Player_manager:
                         for enemy in EnemySpawner.enemies:
                             if pygame.Rect.colliderect(enemy.rect, self.rect):
                                 if(self.weapon == 0):
-                                    self.swing_melee(0,enemy)
+                                    self.swing_melee(0, Player_manager.damage_multiplier, enemy)
                                 else:
-                                    self.shoot_gun(0, enemy)
+                                    self.shoot_gun(0, Player_manager.damage_multiplier, enemy)
                     case pygame.K_m: # Medium hit
                         for enemy in EnemySpawner.enemies:
                             if pygame.Rect.colliderect(enemy.rect, self.rect):
                                 if(self.weapon == 0):
-                                    self.swing_melee(1,enemy)
+                                    self.swing_melee(1, Player_manager.damage_multiplier, enemy)
                                 else:
-                                    self.shoot_gun(2, enemy)
+                                    self.shoot_gun(2, Player_manager.damage_multiplier, enemy)
                     case pygame.K_h: # Hard hit
                         for enemy in EnemySpawner.enemies:
                             if pygame.Rect.colliderect(enemy.rect, self.rect):
                                 if(self.weapon == 0):
-                                    self.swing_melee(2,enemy)
+                                    self.swing_melee(2, Player_manager.damage_multiplier, enemy)
                                 else:
-                                    self.shoot_gun(5, enemy)
+                                    self.shoot_gun(5, Player_manager.damage_multiplier, enemy)
                     case pygame.K_e:
                         for ability in AbilitySpawner.abilities:
                             if pygame.Rect.colliderect(ability.rect, self.rect):
@@ -96,11 +96,11 @@ class Player_manager:
 
 
 
-    def swing_melee(self, amount, enemy):
+    def swing_melee(self, amount, multiplier, enemy):
         if(enemy.distance < 8):
             enemy.health -= self.melee_damage[amount]
 
-    def shoot_gun(self, amount, enemy):
+    def shoot_gun(self, amount, multiplier, enemy):
         for i in range(amount + 1):
             enemy.health -= self.gun_damage
 
