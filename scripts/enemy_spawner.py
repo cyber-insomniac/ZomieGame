@@ -10,7 +10,7 @@ class EnemySpawner:
   enemies = []
 
   def __init__(self):
-    self.spawn_timer = 0.0
+    self.spawn_timer = 4.0
     self.spawn_delay = 5.0
 
   def spawn_enemy(self):

@@ -89,19 +89,21 @@ class Game:
 
             elif self.state == "GAME":
                 pygame.mouse.set_visible(False)
-                self.map.update(dt, keys)
+                
                 self.map.draw(self.internal_surface)
-
-                self.enemyspawner.update(dt)
-
-                self.abilityspawner.update(dt)
-                self.abilitymanager.update(dt, events)
+                
                 self.abilitymanager.draw(self.internal_surface)
 
                 self.rendering_manager.draw(self.internal_surface)
 
                 self.player_manager.update(dt, events)
                 self.player_manager.draw(self.internal_surface)
+
+                if not self.player_manager.level_up_menu.is_active:
+                    self.enemyspawner.update(dt)
+                    self.abilityspawner.update(dt)
+                    self.abilitymanager.update(dt, events)
+                    self.map.update(dt, keys)
 
             # Window stuff idk
             scaled = pygame.transform.scale(self.internal_surface, (WINDOW_W, WINDOW_H))

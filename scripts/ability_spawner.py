@@ -10,7 +10,7 @@ class AbilitySpawner:
 
     def __init__(self):
         self.spawn_timer = 0.0
-        self.spawn_delay = 2.05151#15.05251
+        self.spawn_delay = 15.05251
 
     def spawn_ability(self):
         random_x = random.uniform(-2, 2)
