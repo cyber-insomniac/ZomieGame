@@ -33,7 +33,7 @@ class Button:
         pygame.draw.rect(surface, (200, 200, 200), self.rect, width=2, border_radius=5)
 
         # Text centering
-        text_surf = self.font.render(self.text, True, self.color_text)
+        text_surf = self.font.render(self.text, False, self.color_text)
         text_rect = text_surf.get_rect(center=self.rect.center)
         surface.blit(text_surf, text_rect)
 
@@ -43,7 +43,7 @@ class Menu:
         self.font_title = pygame.font.SysFont("Arial", 30, bold=True)
         self.font_btn = pygame.font.SysFont("Arial", 16)
         
-        self.title = self.font_title.render("Zombie Game", True, (255, 200, 50))
+        self.title = self.font_title.render("Zombie Game", False, (255, 200, 50))
 
         # Button Iniciation
         self.btn_start = Button(110, 65, 100, 30, "Play", self.font_btn)

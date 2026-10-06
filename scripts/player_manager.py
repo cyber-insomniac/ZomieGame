@@ -1,11 +1,13 @@
 import pygame
 import json
 
-from events import ENEMY_DAMAGE_EVENT, ABILITY_PICKEDUP_EVENT
+from events import ENEMY_DAMAGE_EVENT, ABILITY_PICKEDUP_EVENT,ENEMY_DEATH_EVENT
 from enemy_spawner import EnemySpawner
 from ability_spawner import AbilitySpawner
 
-WINDOW_SCALE = 4
+from level_up_menu import LevelUpMenu
+
+WINDOW_SCALE = 6
  
 class Player_manager:
 
@@ -16,14 +18,48 @@ class Player_manager:
         self.gun_damage = 10
         self.melee_damage = [20,40,60]
         self.rect = pygame.Rect(0,0,3,3)
-        self.gun_rect = [10,10]
+        self.gun_rect = [18,18]
         self.melee_rect = [50,20]
 
-        with open("scripts/weapons/melees/sword.json", "r", encoding="utf-8") as json_file: # STARTING WEAPON
-            self.weapon_data = json.load(json_file)
+        self.score = 0
+        self.level = 0
+        self.exp = 0
+        self.next_level_exp = 100
+        
+        self.font = pygame.font.SysFont("Courier New", 12, bold=True)
+        self.gun_font = pygame.font.SysFont("Courier New", 12, bold=False)
+
+        self.is_leveling_up = False
+
+        self.melee_level = 0
+        self.gun_level = -1
+
+        self.is_reloading = False
+
+
+        with open("scripts/weapons/weapon_sequence.json", "r", encoding="utf-8") as json_file:
+            self.weapon_sequence = json.load(json_file)
         
         self.SLASH_IMAGE = pygame.image.load("assets/slash.png").convert_alpha()
         self.CROSSHAIR_IMAGE = pygame.image.load("assets/crosshair.png").convert_alpha()
+
+        self.MELEE_IMAGES = []
+        self.GUN_IMAGES = []
+        for id in self.weapon_sequence["melees"]:
+            image = pygame.image.load(id["image"]).convert_alpha()
+            self.MELEE_IMAGES.append(image)
+
+        for id in self.weapon_sequence["guns"]:
+            image = pygame.image.load(id["image"]).convert_alpha()
+            self.GUN_IMAGES.append(image)
+
+        first_gun = self.weapon_sequence["guns"][0]
+        self.burst = first_gun["burst"]
+        self.max_mag_ammo = first_gun["mag_size"]
+        self.mag_ammo = first_gun["mag_size"]
+        self.total_ammo = first_gun["total_ammo"]
+        self.reload_duration = first_gun["reload_time"]
+        self.gun_damage = first_gun["damage"]
 
         self.MELEE_IMAGE = pygame.image.load("assets/sword.png").convert_alpha()
         self.GUN_IMAGE = pygame.image.load("assets/Ak47.png").convert_alpha()
@@ -31,6 +67,8 @@ class Player_manager:
         self.HEARTH_IMAGE = pygame.image.load("assets/Hearts.png")
 
         self.weapon = 0 # 0 = MELEE | 1 = GUN
+
+        self.level_up_menu = LevelUpMenu()
 
     def update(self, dt, events):
 
@@ -45,21 +83,21 @@ class Player_manager:
                                 if(self.weapon == 0):
                                     self.swing_melee(0, Player_manager.damage_multiplier, enemy)
                                 else:
-                                    self.shoot_gun(0, Player_manager.damage_multiplier, enemy)
+                                    self.shoot_gun(self.burst[0] - 1, Player_manager.damage_multiplier, enemy)
                     case pygame.K_m: # Medium hit
                         for enemy in EnemySpawner.enemies:
                             if pygame.Rect.colliderect(enemy.rect, self.rect):
                                 if(self.weapon == 0):
                                     self.swing_melee(1, Player_manager.damage_multiplier, enemy)
                                 else:
-                                    self.shoot_gun(2, Player_manager.damage_multiplier, enemy)
+                                    self.shoot_gun(self.burst[1] - 1, Player_manager.damage_multiplier, enemy)
                     case pygame.K_h: # Hard hit
                         for enemy in EnemySpawner.enemies:
                             if pygame.Rect.colliderect(enemy.rect, self.rect):
                                 if(self.weapon == 0):
                                     self.swing_melee(2, Player_manager.damage_multiplier, enemy)
                                 else:
-                                    self.shoot_gun(5, Player_manager.damage_multiplier, enemy)
+                                    self.shoot_gun(self.burst[2] - 1, Player_manager.damage_multiplier, enemy)
                     case pygame.K_e:
                         for ability in AbilitySpawner.abilities:
                             if pygame.Rect.colliderect(ability.rect, self.rect):
@@ -67,6 +105,8 @@ class Player_manager:
                                     ev = pygame.event.Event(ABILITY_PICKEDUP_EVENT, {"name": ability.ability_name, "image": ability.current_image})
                                     pygame.event.post(ev)
                                     ability.pickedUp = True
+            elif event.type == ENEMY_DEATH_EVENT:
+                self.add_score_and_exp(event.amount)
 
         if(self.weapon == 0):
             self.rect.width = self.melee_rect[0]
@@ -75,9 +115,28 @@ class Player_manager:
             self.rect.width = self.gun_rect[0]
             self.rect.height = self.gun_rect[1]
 
+        if self.is_reloading: # Reloading
+            self.reload_timer -= dt 
+            if self.reload_timer <= 0:
+                if self.max_mag_ammo <= self.total_ammo:
+                    self.mag_ammo = self.max_mag_ammo
+                    self.total_ammo -= self.max_mag_ammo
+                else:
+                    self.mag_ammo = self.total_ammo
+                    self.total_ammo = 0
+
+                self.is_reloading = False
+
+        if self.level_up_menu.is_active:
+            self.level_up_menu.update(events, self, WINDOW_SCALE)
+
+
         mx, my = pygame.mouse.get_pos()
         scaled_mouse = (mx / WINDOW_SCALE, my / WINDOW_SCALE)
         self.rect.center = scaled_mouse
+
+        if self.mag_ammo <= 0:
+            self.start_reload()
 
     def draw(self, surface):
         # Target
@@ -92,17 +151,134 @@ class Player_manager:
         # Health Indicator
         for x in range(self.health):
             surface.blit(self.HEARTH_IMAGE, (x * 14 + 10, 148))
+
+        # Gun Indicator
+        total_ammo_text = self.gun_font.render(f"{self.total_ammo}", False, (255, 255, 255))
+        surface.blit(total_ammo_text, (30,164))
+
+        mag_ammo_text = self.gun_font.render(f"{self.mag_ammo}", False, (255, 255, 255))
+        surface.blit(mag_ammo_text, (95,164))
+
+        timer_text = self.gun_font.render(f"{self.reload_duration}", False, (255, 255, 255))
+        surface.blit(timer_text, (150,164))
         
+
+        # LEVEL bar
+        surface_width = surface.get_width()
+
+        bar_width = 120
+        bar_height = 8
+        bar_x = (surface_width - bar_width) // 2
+        bar_y = 10
+
+        ## BG color
+        pygame.draw.rect(surface, (50, 50, 50), (bar_x, bar_y, bar_width, bar_height))
+
+        ## 0.0-1.0
+        progress = min(self.exp / self.next_level_exp, 1.0)
+        filled_width = int(bar_width * progress)
+
+        ## Fill color
+        if filled_width > 0:
+            pygame.draw.rect(surface, (0, 200, 10), (bar_x, bar_y, filled_width, bar_height))
+
+        ## Border
+        pygame.draw.rect(surface, (255, 255, 255), (bar_x, bar_y, bar_width, bar_height), 1)
+
+        ## Current Level
+        level_text = self.font.render(f"Lvl. {self.level}", False, (255, 255, 255))
+        surface.blit(level_text, (bar_x - 50, bar_y - 2))
+
+        ## Score
+        score_text = self.font.render(f"{self.score}", False, (255, 255, 255))
+        score_x = bar_x + bar_width + 15
+        score_y = bar_y + (bar_height // 2 + 1) - (score_text.get_height() // 2)
+        surface.blit(score_text, (score_x, score_y))
+
+        # Level Up
+        self.level_up_menu.draw(surface, self)
 
 
 
     def swing_melee(self, amount, multiplier, enemy):
         if(enemy.distance < 8):
             enemy.health -= self.melee_damage[amount]
+            if enemy.health <= 0:
+                 ev = pygame.event.Event(ENEMY_DEATH_EVENT, {"amount": 100})
+                 pygame.event.post(ev)
 
     def shoot_gun(self, amount, multiplier, enemy):
+        if self.is_reloading:
+            return
+
         for i in range(amount + 1):
-            enemy.health -= self.gun_damage
+            if self.mag_ammo > 0:
+                self.mag_ammo -= 1
+                enemy.health -= self.gun_damage
+            else:
+                self.start_reload()
+                break
+
+            if enemy.health <= 0:
+                 ev = pygame.event.Event(ENEMY_DEATH_EVENT, {"amount": 70})
+                 pygame.event.post(ev)
+
+    def start_reload(self):
+        if not self.is_reloading and self.total_ammo != 0:
+            self.is_reloading = True
+            self.reload_timer = self.reload_duration
+
+
+    def add_score_and_exp(self, amount):
+        self.score += amount
+        self.exp += amount
+
+        while self.exp >= self.next_level_exp:
+            self.exp -= self.next_level_exp
+            self.level += 1
+            self.next_level_exp = int(self.next_level_exp * 1.5)
+
+            # Spustíme nové menu
+            self.level_up_menu.trigger()   
+
+    def upgrade_melee(self):
+            self.weapon = 0 
+
+            max_melee_index = len(self.weapon_sequence["melees"]) - 1   
+
+            if self.melee_level < max_melee_index:
+                self.melee_level += 1
+
+                self.MELEE_IMAGE = self.MELEE_IMAGES[self.melee_level]
+                self.melee_damage = self.weapon_sequence["melees"][self.melee_level]["damage"]
+            else:
+                self.melee_damage = [dmg + 10 for dmg in self.melee_damage]
+
+        
+    def upgrade_gun(self):
+        self.weapon = 1
+        max_gun_index = len(self.weapon_sequence["guns"]) - 1
+
+        if self.gun_level < max_gun_index:
+            self.gun_level += 1
+            self.GUN_IMAGE = self.GUN_IMAGES[self.gun_level]
+            
+            gun_data = self.weapon_sequence["guns"][self.gun_level]
+
+            self.gun_damage = gun_data["damage"]
+            self.reload_duration = gun_data["reload_time"]
+
+            self.total_ammo = gun_data["total_ammo"]
+            self.max_mag_ammo = gun_data["mag_size"]
+            self.mag_ammo = gun_data["mag_size"]
+
+            self.burst = gun_data["burst"]
+
+        else:
+            self.gun_damage += 5
+            self.total_ammo += 200
+            self.mag_ammo = self.max_mag_ammo
+
 
 
     ##### TODO #####
