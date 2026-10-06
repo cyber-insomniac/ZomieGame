@@ -1,0 +1,38 @@
+{
+    "melees": [
+        {
+            "id": 0,
+            "name": "Sword",
+            "damage": [20,40,60],
+            "image": "assets/sword.png"
+        },
+        {
+            "id": 1,
+            "name": "Sword",
+            "damage": [20,40,60],
+            "image": "assets/sword.png"
+        }
+    ],
+    "guns": [
+        {
+            "id": 0,
+            "name": "AK47",
+            "damage": 10,
+            "burst": [1,3,5],
+            "mag_size": 10,
+            "reload_time": 1.5,
+            "total_ammo": 50,
+            "image": "assets/Ak47.png"
+        },
+        {
+            "id": 1,
+            "name": "g36c",
+            "damage": 25,
+            "burst": [1,3,5],
+            "mag_size": 10,
+            "reload_time": 1.5,
+            "total_ammo": 50,
+            "image": "assets/G36C.png"
+        }
+    ]
+}

@@ -13,7 +13,7 @@ from rendering_manager import RenderingManager
 from ability_manager import AbilityManager
 
 
-WINDOW_SCALE = 4
+WINDOW_SCALE = 6
 INTERNAL_W, INTERNAL_H = 320, 180
 WINDOW_W, WINDOW_H = INTERNAL_W * WINDOW_SCALE, INTERNAL_H * WINDOW_SCALE
 
