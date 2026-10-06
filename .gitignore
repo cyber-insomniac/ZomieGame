@@ -2,4 +2,5 @@
 /scripts/__pycache__/
 /scripts/abilities/__pycache__/
 *.py[cod]
-*$py.class
+*$py.class__pycache__/
+*.pyc
