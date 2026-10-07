@@ -3,36 +3,134 @@
         {
             "id": 0,
             "name": "Sword",
-            "damage": [20,40,60],
-            "image": "assets/sword.png"
+            "damage": [10,20,40],
+            "image": "assets/melees/sword.png"
         },
         {
             "id": 1,
-            "name": "Sword",
+            "name": "Axe",
+            "damage": [15,30,50],
+            "image": "assets/melees/axe.png"
+        },
+        {
+            "id": 2,
+            "name": "Spear",
             "damage": [20,40,60],
-            "image": "assets/sword.png"
+            "image": "assets/melees/spear.png"
+        },
+        {
+            "id": 3,
+            "name": "Katana",
+            "damage": [40,60,100],
+            "image": "assets/melees/katana.png"
+        },
+        {
+            "id": 4,
+            "name": "Trident",
+            "damage": [50,90,130],
+            "image": "assets/melees/trident.png"
         }
     ],
     "guns": [
         {
             "id": 0,
-            "name": "AK47",
+            "name": "Pistols",
             "damage": 10,
             "burst": [1,3,5],
-            "mag_size": 10,
-            "reload_time": 1.5,
+            "mag_size": 15,
+            "reload_time": 2.0,
             "total_ammo": 50,
-            "image": "assets/Ak47.png"
+            "image": "assets/guns/pistols.png"
         },
         {
             "id": 1,
-            "name": "g36c",
+            "name": "ChiappaRhino",
+            "damage": 15,
+            "burst": [1,3,5],
+            "mag_size": 5,
+            "reload_time": 3.0,
+            "total_ammo": 50,
+            "image": "assets/guns/ChiappaRhino.png"
+        },
+        {
+            "id": 2,
+            "name": "Desert Eagle",
             "damage": 25,
             "burst": [1,3,5],
-            "mag_size": 10,
-            "reload_time": 1.5,
+            "mag_size": 3,
+            "reload_time": 1.9,
             "total_ammo": 50,
-            "image": "assets/G36C.png"
+            "image": "assets/guns/DesertEagle.png"
+        },
+        {
+            "id": 3,
+            "name": "Vector45",
+            "damage": 5,
+            "burst": [10,13,15],
+            "mag_size": 50,
+            "reload_time": 1.2,
+            "total_ammo": 200,
+            "image": "assets/guns/Vector45.png"
+        },
+        {
+            "id": 4,
+            "name": "Kriss Vector",
+            "damage": 8,
+            "burst": [9,12,15],
+            "mag_size": 50,
+            "reload_time": 1.0,
+            "total_ammo": 300,
+            "image": "assets/guns/KrissVector.png"
+        },
+        {
+            "id": 5,
+            "name": "P90",
+            "damage": 10,
+            "burst": [10,13,15],
+            "mag_size": 90,
+            "reload_time": 2.5,
+            "total_ammo": 500,
+            "image": "assets/guns/FN-P90.png"
+        },
+        {
+            "id": 6,
+            "name": "G36C",
+            "damage": 20,
+            "burst": [5,7,8],
+            "mag_size": 32,
+            "reload_time": 1.3,
+            "total_ammo": 500,
+            "image": "assets/guns/G36C.png"
+        },
+        {
+            "id": 7,
+            "name": "AK47",
+            "damage": 50,
+            "burst": [2,5,8],
+            "mag_size": 40,
+            "reload_time": 1.2,
+            "total_ammo": 500,
+            "image": "assets/guns/Ak47.png"
+        },
+        {
+            "id": 8,
+            "name": "AA-12",
+            "damage": 100,
+            "burst": [1,2,3],
+            "mag_size": 30,
+            "reload_time": 2.5,
+            "total_ammo": 400,
+            "image": "assets/guns/AA-12.png"
+        },
+        {
+            "id": 9,
+            "name": "AS-VAL",
+            "damage": 110,
+            "burst": [2,3,5],
+            "mag_size": 40,
+            "reload_time": 1.5,
+            "total_ammo": 1000,
+            "image": "assets/guns/AS-VAL.png"
         }
     ]
 }

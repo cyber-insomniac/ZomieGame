@@ -1,9 +1,10 @@
 import pygame
 import json
 
-from events import ENEMY_DAMAGE_EVENT, ABILITY_PICKEDUP_EVENT,ENEMY_DEATH_EVENT
+from events import ENEMY_DAMAGE_EVENT, ABILITY_PICKEDUP_EVENT,ENEMY_DEATH_EVENT, GAMEOVER_EVENT
 from enemy_spawner import EnemySpawner
 from ability_spawner import AbilitySpawner
+from floating_text import FloatingText
 
 from level_up_menu import LevelUpMenu
 
@@ -14,28 +15,8 @@ class Player_manager:
     damage_multiplier = 1.0
 
     def __init__(self):
-        self.health = 10
-        self.gun_damage = 10
-        self.melee_damage = [20,40,60]
-        self.rect = pygame.Rect(0,0,3,3)
-        self.gun_rect = [18,18]
-        self.melee_rect = [50,20]
-
-        self.score = 0
-        self.level = 0
-        self.exp = 0
-        self.next_level_exp = 100
-        
         self.font = pygame.font.SysFont("Courier New", 12, bold=True)
         self.gun_font = pygame.font.SysFont("Courier New", 12, bold=False)
-
-        self.is_leveling_up = False
-
-        self.melee_level = 0
-        self.gun_level = -1
-
-        self.is_reloading = False
-
 
         with open("scripts/weapons/weapon_sequence.json", "r", encoding="utf-8") as json_file:
             self.weapon_sequence = json.load(json_file)
@@ -53,6 +34,34 @@ class Player_manager:
             image = pygame.image.load(id["image"]).convert_alpha()
             self.GUN_IMAGES.append(image)
 
+        self.HEARTH_IMAGE = pygame.image.load("assets/Hearts.png")
+
+        self.floating_texts = []
+
+        self.reset()
+        self.level_up_menu = LevelUpMenu()
+
+
+    def reset(self):
+        self.health = 10
+        self.gun_damage = 10
+        self.melee_damage = [20,40,60]
+        self.rect = pygame.Rect(0,0,3,3)
+        self.gun_rect = [18,18]
+        self.melee_rect = [50,20]
+
+        self.score = 0
+        self.level = 0
+        self.exp = 0
+        self.next_level_exp = 300
+
+        self.is_leveling_up = False
+
+        self.melee_level = 0
+        self.gun_level = -1
+
+        self.is_reloading = False
+
         first_gun = self.weapon_sequence["guns"][0]
         self.burst = first_gun["burst"]
         self.max_mag_ammo = first_gun["mag_size"]
@@ -60,51 +69,65 @@ class Player_manager:
         self.total_ammo = first_gun["total_ammo"]
         self.reload_duration = first_gun["reload_time"]
         self.gun_damage = first_gun["damage"]
+        self.MELEE_IMAGE = self.MELEE_IMAGES[0]
+        self.GUN_IMAGE = self.GUN_IMAGES[0]
 
-        self.MELEE_IMAGE = pygame.image.load("assets/sword.png").convert_alpha()
-        self.GUN_IMAGE = pygame.image.load("assets/Ak47.png").convert_alpha()
+        Player_manager.damage_multiplier = 0
 
-        self.HEARTH_IMAGE = pygame.image.load("assets/Hearts.png")
+        self.floating_texts.clear()
 
         self.weapon = 0 # 0 = MELEE | 1 = GUN
-
-        self.level_up_menu = LevelUpMenu()
 
     def update(self, dt, events):
 
         for event in events:
             if event.type == ENEMY_DAMAGE_EVENT:
                 self.health -= event.amount
+                if self.health <= 0:
+                    ev = pygame.event.Event(GAMEOVER_EVENT, {"score": self.score})
+                    pygame.event.post(ev)
+
             elif event.type == pygame.KEYDOWN:
                 match event.key:
-                    case pygame.K_l: # Light hit
-                        for enemy in EnemySpawner.enemies:
-                            if pygame.Rect.colliderect(enemy.rect, self.rect):
-                                if(self.weapon == 0):
+                    case pygame.K_l:  # Light
+                        self.floating_texts.append(
+                            FloatingText(self.rect.centerx, self.rect.top - 5, "Light", (200, 200, 200), lifetime=0.5, speed=30)
+                        )
+                        if self.weapon == 0:
+                            for enemy in EnemySpawner.enemies:
+                                if pygame.Rect.colliderect(enemy.rect, self.rect):
                                     self.swing_melee(0, Player_manager.damage_multiplier, enemy)
-                                else:
-                                    self.shoot_gun(self.burst[0] - 1, Player_manager.damage_multiplier, enemy)
-                    case pygame.K_m: # Medium hit
-                        for enemy in EnemySpawner.enemies:
-                            if pygame.Rect.colliderect(enemy.rect, self.rect):
-                                if(self.weapon == 0):
+                                    break
+                        else:
+                            hit_enemy = next((e for e in EnemySpawner.enemies if pygame.Rect.colliderect(e.rect, self.rect)), None)
+                            self.shoot_gun(self.burst[0], Player_manager.damage_multiplier, hit_enemy)
+
+                    case pygame.K_m:  # Medium
+                        self.floating_texts.append(
+                            FloatingText(self.rect.centerx, self.rect.top - 5, "Medium!", (255, 215, 0), lifetime=0.6, speed=45)
+                        )
+                        if self.weapon == 0:
+                            for enemy in EnemySpawner.enemies:
+                                if pygame.Rect.colliderect(enemy.rect, self.rect):
                                     self.swing_melee(1, Player_manager.damage_multiplier, enemy)
-                                else:
-                                    self.shoot_gun(self.burst[1] - 1, Player_manager.damage_multiplier, enemy)
-                    case pygame.K_h: # Hard hit
-                        for enemy in EnemySpawner.enemies:
-                            if pygame.Rect.colliderect(enemy.rect, self.rect):
-                                if(self.weapon == 0):
+                                    break
+                        else:
+                            hit_enemy = next((e for e in EnemySpawner.enemies if pygame.Rect.colliderect(e.rect, self.rect)), None)
+                            self.shoot_gun(self.burst[1], Player_manager.damage_multiplier, hit_enemy)
+
+                    case pygame.K_h:  # Hard
+                        self.floating_texts.append(
+                            FloatingText(self.rect.centerx, self.rect.top - 5, "HARD!!!", (230, 0, 0), lifetime=0.8, speed=60)
+                        )
+                        if self.weapon == 0:
+                            for enemy in EnemySpawner.enemies:
+                                if pygame.Rect.colliderect(enemy.rect, self.rect):
                                     self.swing_melee(2, Player_manager.damage_multiplier, enemy)
-                                else:
-                                    self.shoot_gun(self.burst[2] - 1, Player_manager.damage_multiplier, enemy)
-                    case pygame.K_e:
-                        for ability in AbilitySpawner.abilities:
-                            if pygame.Rect.colliderect(ability.rect, self.rect):
-                                if ability.distance < 5:
-                                    ev = pygame.event.Event(ABILITY_PICKEDUP_EVENT, {"name": ability.ability_name, "image": ability.current_image})
-                                    pygame.event.post(ev)
-                                    ability.pickedUp = True
+                                    break
+                        else:
+                            hit_enemy = next((e for e in EnemySpawner.enemies if pygame.Rect.colliderect(e.rect, self.rect)), None)
+                            self.shoot_gun(self.burst[2], Player_manager.damage_multiplier, hit_enemy)
+
             elif event.type == ENEMY_DEATH_EVENT:
                 self.add_score_and_exp(event.amount)
 
@@ -138,6 +161,10 @@ class Player_manager:
         if self.mag_ammo <= 0:
             self.start_reload()
 
+        for ft in self.floating_texts:
+            ft.update(dt)
+        self.floating_texts = [ft for ft in self.floating_texts if ft.is_alive()]
+
     def draw(self, surface):
         # Target
         current_image = self.SLASH_IMAGE if self.weapon == 0 else self.CROSSHAIR_IMAGE
@@ -153,15 +180,23 @@ class Player_manager:
             surface.blit(self.HEARTH_IMAGE, (x * 14 + 10, 148))
 
         # Gun Indicator
-        total_ammo_text = self.gun_font.render(f"{self.total_ammo}", False, (255, 255, 255))
+        if self.weapon == 1:
+            total_ammo_text = self.gun_font.render(f"{self.total_ammo}", False, (255, 255, 255))
+            mag_ammo_text = self.gun_font.render(f"{self.mag_ammo}", False, (255, 255, 255))
+            timer_text = self.gun_font.render(f"{self.reload_duration}", False, (255, 255, 255))
+            
+        else:
+            total_ammo_text = self.gun_font.render(f"-", False, (255, 255, 255))
+            mag_ammo_text = self.gun_font.render(f"-", False, (255, 255, 255))
+            timer_text = self.gun_font.render(f"-", False, (255, 255, 255))
+
         surface.blit(total_ammo_text, (30,164))
-
-        mag_ammo_text = self.gun_font.render(f"{self.mag_ammo}", False, (255, 255, 255))
         surface.blit(mag_ammo_text, (95,164))
-
-        timer_text = self.gun_font.render(f"{self.reload_duration}", False, (255, 255, 255))
         surface.blit(timer_text, (150,164))
-        
+
+        # Hit indicator
+        for ft in self.floating_texts:
+            ft.draw(surface, self.font)
 
         # LEVEL bar
         surface_width = surface.get_width()
@@ -252,7 +287,7 @@ class Player_manager:
                 self.MELEE_IMAGE = self.MELEE_IMAGES[self.melee_level]
                 self.melee_damage = self.weapon_sequence["melees"][self.melee_level]["damage"]
             else:
-                self.melee_damage = [dmg + 10 for dmg in self.melee_damage]
+                self.melee_damage = [dmg + 50 for dmg in self.melee_damage]
 
         
     def upgrade_gun(self):
@@ -275,8 +310,8 @@ class Player_manager:
             self.burst = gun_data["burst"]
 
         else:
-            self.gun_damage += 5
-            self.total_ammo += 200
+            self.gun_damage += 30
+            self.total_ammo += 1000
             self.mag_ammo = self.max_mag_ammo
 
 
