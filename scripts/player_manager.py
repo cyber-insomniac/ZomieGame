@@ -14,7 +14,7 @@ class Player_manager:
 
     damage_multiplier = 1.0
 
-    def __init__(self):
+    def __init__(self, difficulty):
         self.font = pygame.font.SysFont("Courier New", 12, bold=True)
         self.gun_font = pygame.font.SysFont("Courier New", 12, bold=False)
 
@@ -38,22 +38,24 @@ class Player_manager:
 
         self.floating_texts = []
 
-        self.reset()
+        self.reset(difficulty)
         self.level_up_menu = LevelUpMenu()
 
 
-    def reset(self):
+    def reset(self, difficulty):
         self.health = 10
         self.gun_damage = 10
         self.melee_damage = [20,40,60]
         self.rect = pygame.Rect(0,0,3,3)
-        self.gun_rect = [18,18]
+        self.gun_rect = [11,11]
         self.melee_rect = [50,20]
 
         self.score = 0
         self.level = 0
         self.exp = 0
         self.next_level_exp = 300
+
+        self.difficulty = difficulty
 
         self.is_leveling_up = False
 
@@ -127,6 +129,14 @@ class Player_manager:
                         else:
                             hit_enemy = next((e for e in EnemySpawner.enemies if pygame.Rect.colliderect(e.rect, self.rect)), None)
                             self.shoot_gun(self.burst[2], Player_manager.damage_multiplier, hit_enemy)
+
+                    case pygame.K_e:
+                        for ability in AbilitySpawner.abilities:
+                            if pygame.Rect.colliderect(ability.rect, self.rect):
+                                if ability.distance < 5:
+                                    ev = pygame.event.Event(ABILITY_PICKEDUP_EVENT, {"name": ability.ability_name, "image": ability.current_image})
+                                    pygame.event.post(ev)
+                                    ability.pickedUp = True
 
             elif event.type == ENEMY_DEATH_EVENT:
                 self.add_score_and_exp(event.amount)
@@ -246,17 +256,18 @@ class Player_manager:
         if self.is_reloading:
             return
 
-        for i in range(amount + 1):
+        for i in range(amount):
             if self.mag_ammo > 0:
                 self.mag_ammo -= 1
-                enemy.health -= self.gun_damage
+                if enemy != None:
+                    enemy.health -= self.gun_damage
             else:
                 self.start_reload()
                 break
-
-            if enemy.health <= 0:
-                 ev = pygame.event.Event(ENEMY_DEATH_EVENT, {"amount": 70})
-                 pygame.event.post(ev)
+            if enemy != None:
+                if enemy.health <= 0:
+                    ev = pygame.event.Event(ENEMY_DEATH_EVENT, {"amount": 70})
+                    pygame.event.post(ev)
 
     def start_reload(self):
         if not self.is_reloading and self.total_ammo != 0:
@@ -271,7 +282,7 @@ class Player_manager:
         while self.exp >= self.next_level_exp:
             self.exp -= self.next_level_exp
             self.level += 1
-            self.next_level_exp = int(self.next_level_exp * 1.5)
+            self.next_level_exp = int(self.next_level_exp * (1 + 0.25  * self.difficulty))
 
             # Spustíme nové menu
             self.level_up_menu.trigger()   

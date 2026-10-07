@@ -37,16 +37,20 @@ class Game:
 
         self.final_score = 0
 
+        self.difficulty = 2
+
         # Class initiation
         self.map = MapRenderer()
         self.menu = Menu()
         self.leaderboard = Leaderboard()
-        self.enemyspawner = EnemySpawner()
+        self.enemyspawner = EnemySpawner(self.difficulty)
         self.abilityspawner = AbilitySpawner()
-        self.player_manager = Player_manager()
+        self.player_manager = Player_manager(self.difficulty)
         self.rendering_manager = RenderingManager()
         self.abilitymanager = AbilityManager()
         self.gameover_screen = GameOverScreen()
+
+        
         
     def run(self):
         while self.running:
@@ -137,9 +141,10 @@ class Game:
     def reset(self):
         self.abilitymanager.reset()
         self.abilityspawner.reset()
-        self.enemyspawner.reset()
-        self.player_manager.reset()
+        self.enemyspawner.reset(self.difficulty)
+        self.player_manager.reset(self.difficulty)
         self.leaderboard.reload()
+        self.final_score = 0
 
 
 if __name__ == "__main__":
