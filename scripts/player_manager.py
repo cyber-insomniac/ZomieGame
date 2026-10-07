@@ -71,8 +71,11 @@ class Player_manager:
         self.total_ammo = first_gun["total_ammo"]
         self.reload_duration = first_gun["reload_time"]
         self.gun_damage = first_gun["damage"]
-        self.MELEE_IMAGE = self.MELEE_IMAGES[0]
         self.GUN_IMAGE = self.GUN_IMAGES[0]
+
+        fisrt_melee = self.weapon_sequence["melees"][0]
+        self.melee_damage = fisrt_melee["damage"]
+        self.MELEE_IMAGE = self.MELEE_IMAGES[0]
 
         Player_manager.damage_multiplier = 0
 
