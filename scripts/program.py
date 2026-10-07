@@ -10,9 +10,13 @@ from enemy_spawner import EnemySpawner
 from ability_spawner import AbilitySpawner
 from player_manager import Player_manager
 from rendering_manager import RenderingManager
+from ability_manager import AbilityManager
+from gameover_screen import GameOverScreen
+
+from events import GAMEOVER_EVENT
 
 
-WINDOW_SCALE = 3
+WINDOW_SCALE = 6
 INTERNAL_W, INTERNAL_H = 320, 180
 WINDOW_W, WINDOW_H = INTERNAL_W * WINDOW_SCALE, INTERNAL_H * WINDOW_SCALE
 
@@ -31,6 +35,8 @@ class Game:
 
         self.state = "MENU"  # Game state
 
+        self.final_score = 0
+
         # Class initiation
         self.map = MapRenderer()
         self.menu = Menu()
@@ -39,6 +45,8 @@ class Game:
         self.abilityspawner = AbilitySpawner()
         self.player_manager = Player_manager()
         self.rendering_manager = RenderingManager()
+        self.abilitymanager = AbilityManager()
+        self.gameover_screen = GameOverScreen()
         
     def run(self):
         while self.running:
@@ -52,9 +60,13 @@ class Game:
                 if event.type == pygame.QUIT:
                     self.running = False
                 elif event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
-                    self.state = "MENU"
-                elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+                    if self.state != "GAMEOVER":
+                        self.state = "MENU" 
+                elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1 or event.type == pygame.KEYDOWN and event.key == pygame.K_e:
                     mouse_clicked = True
+                elif event.type == GAMEOVER_EVENT:
+                    self.final_score = event.score
+                    self.state = "GAMEOVER"
                 
 
             keys = pygame.key.get_pressed()
@@ -87,17 +99,32 @@ class Game:
 
             elif self.state == "GAME":
                 pygame.mouse.set_visible(False)
-                self.map.update(dt, keys)
+                
                 self.map.draw(self.internal_surface)
-
-                self.enemyspawner.update(dt)
-
-                self.abilityspawner.update(dt)
+                
+                self.abilitymanager.draw(self.internal_surface)
 
                 self.rendering_manager.draw(self.internal_surface)
 
                 self.player_manager.update(dt, events)
                 self.player_manager.draw(self.internal_surface)
+
+                if not self.player_manager.level_up_menu.is_active:
+                    self.enemyspawner.update(dt)
+                    self.abilityspawner.update(dt)
+                    self.abilitymanager.update(dt, events)
+                    self.map.update(dt, keys)
+
+            elif self.state == "GAMEOVER":
+                pygame.mouse.set_visible(True)
+                action = self.gameover_screen.update(scaled_mouse, mouse_clicked, events, self.final_score, WINDOW_SCALE)
+                
+                if action == "MAIN_MENU":
+                    self.reset()
+                    self.state = "MENU"
+
+                self.gameover_screen.draw(self.internal_surface)
+
 
             # Window stuff idk
             scaled = pygame.transform.scale(self.internal_surface, (WINDOW_W, WINDOW_H))
@@ -106,6 +133,14 @@ class Game:
 
         pygame.quit()
         sys.exit()
+
+    def reset(self):
+        self.abilitymanager.reset()
+        self.abilityspawner.reset()
+        self.enemyspawner.reset()
+        self.player_manager.reset()
+        self.leaderboard.reload()
+
 
 if __name__ == "__main__":
     game = Game()

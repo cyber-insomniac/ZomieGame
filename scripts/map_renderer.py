@@ -14,7 +14,7 @@ MIN_Z = 0.08
 FAR_Z = 15.0
 FORWARD_SPEED = 0.7
 SKY_COLOR = (25, 20, 40)
-BUILDING_OVERLAP = 0.85
+BUILDING_OVERLAP = 0.5
 DASH_SPACING = 2.0
 MAX_SPRITE_PX = INTERNAL_W * 4
 
@@ -81,7 +81,7 @@ class Receding:
 class MapRenderer:
     def __init__(self):
         self.street_img = pygame.image.load(find_asset("street2.png")).convert_alpha()
-        self.ui_img = pygame.image.load(find_asset("UI.png")).convert_alpha()
+        self.ui_img = pygame.image.load(find_asset("UI2.png")).convert_alpha()
         self.backgroundImg = pygame.image.load(find_asset("Backgroundblue_with_MOON2.png"))
 
         building_l = AnchoredSprite(find_asset("buildingL2.png"), anchor_frac=(0.234, 1.0))

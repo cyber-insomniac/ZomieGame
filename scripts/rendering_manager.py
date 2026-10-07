@@ -2,11 +2,12 @@ import pygame
 
 from ability_spawner import AbilitySpawner
 from enemy_spawner import EnemySpawner
+from ability_manager import AbilityManager
 
 class RenderingManager:
 
     def draw(self, surface):
-        all_objects = EnemySpawner.enemies + AbilitySpawner.abilities
+        all_objects = EnemySpawner.enemies + AbilitySpawner.abilities + AbilityManager.spawned_abilities
 
         sorted_objects = sorted(all_objects, key=lambda obj: obj.distance, reverse=True)
 

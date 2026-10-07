@@ -1,0 +1,9 @@
+{
+    "image_path" : "assets/dynamite.png",
+
+    "speed_z": 7.0,
+    "speed_y": 3.5,
+
+    "radius": 2.0,
+    "damage": 60
+}
