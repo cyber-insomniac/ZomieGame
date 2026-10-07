@@ -8,11 +8,14 @@ class AbilityManager:
     spawned_abilities = []
 
     def __init__(self):
-        self.active_ability = ""
-        self.ACTIVE_ABILITY_IMAGE = None
-
         self.rect = pygame.Rect(150,148,29,29)
         self.rect.center = (195,161)
+        self.reset()
+
+    def reset(self):
+        self.active_ability = ""
+        self.ACTIVE_ABILITY_IMAGE = None
+        AbilityManager.spawned_abilities.clear()
     
     def update(self,dt,events):
         for event in events:

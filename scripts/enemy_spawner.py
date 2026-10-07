@@ -10,14 +10,22 @@ class EnemySpawner:
   enemies = []
 
   def __init__(self):
+    self.reset()
+
+  def reset(self):
     self.spawn_timer = 4.0
     self.spawn_delay = 5.0
+    self.enemy_health = 100
+    self.difficulty = 2
+    EnemySpawner.enemies.clear()
 
   def spawn_enemy(self):
     random_x = random.uniform(-2, 2)
-    new_enemy = Enemy(random_x, 0, 38 * 3, 60 * 3, 100, 1)
-    # Přidáváme do třídního seznamu
+    new_enemy = Enemy(random_x, 0, 38 * 3, 60 * 3, self.enemy_health, 1)
     EnemySpawner.enemies.append(new_enemy)
+
+    self.enemy_health += self.difficulty
+    self.spawn_delay = max(1.0, self.spawn_delay - 0.05)
 
   def update(self, dt):
     self.spawn_timer += dt

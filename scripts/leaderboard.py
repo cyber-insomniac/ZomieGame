@@ -49,6 +49,9 @@ class Leaderboard:
         self.btn_back = Button(110, 150, 100, 25, "Back", self.font_btn)
 
         self.scores = self.load_highscores(limit=5)
+
+    def reload(self):
+        self.scores = self.load_highscores(limit=5)
         
     def load_highscores(self, limit):
         here = os.path.dirname(os.path.abspath(__file__))
