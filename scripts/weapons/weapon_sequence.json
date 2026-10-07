@@ -47,8 +47,8 @@
             "name": "ChiappaRhino",
             "damage": 15,
             "burst": [1,3,5],
-            "mag_size": 5,
-            "reload_time": 3.0,
+            "mag_size": 10,
+            "reload_time": 2.0,
             "total_ammo": 50,
             "image": "assets/guns/ChiappaRhino.png"
         },
@@ -57,9 +57,9 @@
             "name": "Desert Eagle",
             "damage": 25,
             "burst": [1,3,5],
-            "mag_size": 3,
+            "mag_size": 5,
             "reload_time": 1.9,
-            "total_ammo": 50,
+            "total_ammo": 100,
             "image": "assets/guns/DesertEagle.png"
         },
         {

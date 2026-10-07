@@ -9,14 +9,14 @@ from enemy import Enemy
 class EnemySpawner:
   enemies = []
 
-  def __init__(self):
-    self.reset()
+  def __init__(self, difficulty):
+    self.reset(difficulty)
 
-  def reset(self):
+  def reset(self, difficulty):
     self.spawn_timer = 4.0
     self.spawn_delay = 5.0
     self.enemy_health = 100
-    self.difficulty = 2
+    self.difficulty = difficulty
     EnemySpawner.enemies.clear()
 
   def spawn_enemy(self):
@@ -25,7 +25,7 @@ class EnemySpawner:
     EnemySpawner.enemies.append(new_enemy)
 
     self.enemy_health += self.difficulty
-    self.spawn_delay = max(1.0, self.spawn_delay - 0.05)
+    self.spawn_delay = max(1.0, self.spawn_delay - (0.025 * self.difficulty))
 
   def update(self, dt):
     self.spawn_timer += dt
