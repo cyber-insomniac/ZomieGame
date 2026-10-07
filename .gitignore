@@ -4,3 +4,5 @@
 *.py[cod]
 *$py.class__pycache__/
 *.pyc
+__pycache__/
+*.pyc

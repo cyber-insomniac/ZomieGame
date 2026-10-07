@@ -6,21 +6,19 @@
 #define left            3
 #define right           4
 #define down            5
-#define use_button      6
-#define pick_up_button  7
+#define use_button      7
+#define pick_up_button  6
 
 const int MOVE_SPEED = 5;
 
 const unsigned long MOUSE_INTERVAL_MS = 15;
 unsigned long lastMouseMove = 0;
-int mouseX = 0;
-int mouseY = 0;
 
 const int HIT_TRIGGER_THRESHOLD = 100;
 const int RESET_THRESHOLD       = 30;
-const int LIGHT_HIT_MIN         = 450;
-const int MEDIUM_HIT_MIN        = 800;
-const int HARD_HIT_MIN          = 850;
+const int LIGHT_HIT_MIN         = 750;
+const int MEDIUM_HIT_MIN        = 805;
+const int HARD_HIT_MIN          = 810;
 
 const unsigned long CAPTURE_WINDOW_MS   = 120; // how long to watch for the peak after a hit starts
 const unsigned long MIN_HIT_INTERVAL_MS = 200; // hard debounce floor between hits
@@ -46,6 +44,8 @@ void setup() {
 void loop() {
 
     if (millis() - lastMouseMove >= MOUSE_INTERVAL_MS) {
+        int mouseX = 0;
+        int mouseY = 0;
 
         if (digitalRead(right))     mouseX += MOVE_SPEED;
         if (digitalRead(left))      mouseX -= MOVE_SPEED;
@@ -61,9 +61,9 @@ void loop() {
     }
 
     if (digitalRead(use_button)){
-        Keyboard.press('g');
+        Keyboard.press('a');
         delay(30);
-        Keyboard.release('g');
+        Keyboard.release('a');
     } 
     if (digitalRead(pick_up_button)){
         Keyboard.press('e');
@@ -74,27 +74,23 @@ void loop() {
     unsigned long now = millis();
 
     if (waitingForReset) {
-        // Still cooling down from the last hit - wait for pressure to drop
-        // back off before arming for the next one. Note: no "return" here,
-        // so mouse/use/pickup above still run every pass during cooldown.
-        if (reading < RESET_THRESHOLD) {
-            waitingForReset = false;
-        } else if (reading >= HIT_TRIGGER_THRESHOLD && (now - lastHitTime) > MIN_HIT_INTERVAL_MS) {
-            int peak = reading;
-            unsigned long captureStart = now;
+      if (reading < RESET_THRESHOLD) {
+        waitingForReset = false;
+      }
+    } else if (reading >= HIT_TRIGGER_THRESHOLD && (now - lastHitTime) > MIN_HIT_INTERVAL_MS) {
+      int peak = reading;
+      unsigned long captureStart = now;
 
-    // Watch for the true peak over a short window (the impact spike)
-            while (millis() - captureStart < CAPTURE_WINDOW_MS) {
-                int sample = analogRead(attack_button);
-                if (sample > peak) peak = sample;
-            }
+      while (millis() - captureStart < CAPTURE_WINDOW_MS) {
+        int sample = analogRead(attack_button);
+        if (sample > peak) peak = sample;
+      }
 
-            registerHit(peak);
+      registerHit(peak);
 
-            lastHitTime = millis();
-            waitingForReset = true;
-        }
-    }
+      lastHitTime = millis();
+      waitingForReset = true;
+  }
 }
 
 void registerHit(float peakForce) {
