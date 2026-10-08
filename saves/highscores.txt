@@ -4,4 +4,11 @@ mrda 100
 mrda 100
 Daniel 4000
 aaa 1420
+<<<<<<< HEAD
 test 300
+=======
+dan 32080
+melee 20470
+guny 33140
+MELEE 17800
+>>>>>>> main
