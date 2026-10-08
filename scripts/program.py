@@ -3,6 +3,8 @@ import sys
 import json
 import os
 
+VALID_DIFFICULTIES = [1, 2, 4, 8]
+
 def get_initial_settings():
     here = os.path.dirname(os.path.abspath(__file__))
     path = os.path.abspath(os.path.join(here, "..", "saves", "settings.json"))
@@ -13,8 +15,10 @@ def get_initial_settings():
             with open(path, "r", encoding="utf-8") as f:
                 data = json.load(f)
                 scale = int(data.get("window_scale", 6))
-                diff = int(data.get("difficulty", 2))
-                if diff not in range(1, 5):
+                raw_diff = int(data.get("difficulty", 2))
+                if raw_diff in VALID_DIFFICULTIES:
+                    diff = raw_diff
+                else:
                     diff = 2
         except Exception:
             pass

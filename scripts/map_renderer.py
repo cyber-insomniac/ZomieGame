@@ -8,7 +8,7 @@ HORIZON_Y = 32
 VANISH_X = 160
 FOCAL = 65.9
 CAM_HEIGHT = 1.533
-STREET_HALF_WIDTH = 2.2
+STREET_HALF_WIDTH = 2.8
 NEAR_Z_REF = 1.0
 MIN_Z = 0.08
 FAR_Z = 15.0
@@ -84,8 +84,8 @@ class MapRenderer:
         self.ui_img = pygame.image.load(find_asset("UI2.png")).convert_alpha()
         self.backgroundImg = pygame.image.load(find_asset("Backgroundblue_with_MOON2.png"))
 
-        building_l = AnchoredSprite(find_asset("buildingL2.png"), anchor_frac=(0.234, 1.0))
-        building_r = AnchoredSprite(find_asset("buildingR2.png"), anchor_frac=(0.75, 1.0))
+        building_l = AnchoredSprite(find_asset("buildingL3.png"), anchor_frac=(0.234, 1.0))
+        building_r = AnchoredSprite(find_asset("buildingR3.png"), anchor_frac=(0.75, 1.0))
         dash = AnchoredSprite(find_asset("streetline2.png"), anchor_frac=(0.5, 1.0))
         
 

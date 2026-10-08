@@ -24,6 +24,8 @@ class EnemySpawner:
     new_enemy = Enemy(random_x, 0, 38 * 3, 60 * 3, self.enemy_health, 1)
     EnemySpawner.enemies.append(new_enemy)
 
+    print(f"spawned new enemy health: {self.enemy_health} and next one in {self.spawn_delay}")
+
     self.enemy_health += self.difficulty
     self.spawn_delay = max(1.0, self.spawn_delay - (0.025 * self.difficulty))
 
