@@ -37,6 +37,7 @@ class Enemy:
         self.width = width
         self.damage = damage
         self.health = health
+        self.full_health = health
         self.ZOMBIE_IMAGE_FULL = pygame.image.load("assets/Zombie.png").convert_alpha()
         self.ZOMBIE_IMAGE_HALF = pygame.image.load("assets/Zombie_took_hits.png").convert_alpha()
  
@@ -62,7 +63,7 @@ class Enemy:
  
     def draw(self, surface):
         # Choose sprite based on health
-        current_image = self.ZOMBIE_IMAGE_FULL if self.health > 50 else self.ZOMBIE_IMAGE_HALF
+        current_image = self.ZOMBIE_IMAGE_FULL if self.health > (self.full_health / 2) else self.ZOMBIE_IMAGE_HALF
 
         # Scale the image to match the updated rectangle size
         scaled_image = pygame.transform.scale(current_image, (self.rect.width, self.rect.height))

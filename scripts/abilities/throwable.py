@@ -3,7 +3,8 @@ import math
 import json
 import os
 
-from enemy_spawner import EnemySpawner
+from enemy_spawner import EnemySpawner 
+from events import ENEMY_DEATH_EVENT
 
 class Throwable:
 
@@ -95,6 +96,9 @@ class Throwable:
             
             if dist_to_explosion <= radius:
                 enemy.health -= damage
+                if enemy.health <= 0:
+                    ev = pygame.event.Event(ENEMY_DEATH_EVENT, {"amount": 150})
+                    pygame.event.post(ev)
 
     def draw(self, surface):
         if self.active:

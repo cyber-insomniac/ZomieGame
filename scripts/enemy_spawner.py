@@ -9,15 +9,25 @@ from enemy import Enemy
 class EnemySpawner:
   enemies = []
 
-  def __init__(self):
-    self.spawn_timer = 0.0
+  def __init__(self, difficulty):
+    self.reset(difficulty)
+
+  def reset(self, difficulty):
+    self.spawn_timer = 4.0
     self.spawn_delay = 5.0
+    self.enemy_health = 100
+    self.difficulty = difficulty
+    EnemySpawner.enemies.clear()
 
   def spawn_enemy(self):
     random_x = random.uniform(-2, 2)
-    new_enemy = Enemy(random_x, 0, 38 * 3, 60 * 3, 100, 1)
-    # Přidáváme do třídního seznamu
+    new_enemy = Enemy(random_x, 0, 38 * 3, 60 * 3, self.enemy_health, 1)
     EnemySpawner.enemies.append(new_enemy)
+
+    print(f"spawned new enemy health: {self.enemy_health} and next one in {self.spawn_delay}")
+
+    self.enemy_health += self.difficulty
+    self.spawn_delay = max(1.0, self.spawn_delay - (0.025 * self.difficulty))
 
   def update(self, dt):
     self.spawn_timer += dt
