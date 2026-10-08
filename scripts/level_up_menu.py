@@ -74,7 +74,7 @@ class LevelUpMenu:
         pygame.draw.rect(surface, (255, 255, 255), self.btn1_rect, 1)
         
         # Text na tlačítku 1
-        btn1_text = self.font.render("[USE_ABILITY] Melee Up", False, (255, 255, 255))
+        btn1_text = self.font.render("[USE] Melee Up", False, (255, 255, 255))
         surface.blit(btn1_text, (self.btn1_rect.x + 8, self.btn1_rect.y + 12))
         
         # Obrázek zbraně na tlačítku 1 (např. meč / MELEE_IMAGE z hráče)
@@ -95,7 +95,7 @@ class LevelUpMenu:
         pygame.draw.rect(surface, (255, 255, 255), self.btn2_rect, 1)
         
         # Text na tlačítku 2
-        btn2_text = self.font.render("[PICK_UP] Gun Up", False, (255, 255, 255))
+        btn2_text = self.font.render("[PICK UP] Gun Up", False, (255, 255, 255))
         surface.blit(btn2_text, (self.btn2_rect.x + 8, self.btn2_rect.y + 12))
         
         # Obrázek zbraně na tlačítku 2 (např. AK47 / GUN_IMAGE z hráče, nebo můžeš mít seznam zbraní)
