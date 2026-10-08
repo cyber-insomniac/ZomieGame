@@ -250,7 +250,7 @@ class Player_manager:
 
     def swing_melee(self, amount, multiplier, enemy):
         if(enemy.distance < 8):
-            enemy.health -= self.melee_damage[amount]
+            enemy.health -= (self.melee_damage[amount] * self.damage_multiplier)
             if enemy.health <= 0:
                  ev = pygame.event.Event(ENEMY_DEATH_EVENT, {"amount": 100})
                  pygame.event.post(ev)
@@ -263,7 +263,7 @@ class Player_manager:
             if self.mag_ammo > 0:
                 self.mag_ammo -= 1
                 if enemy != None:
-                    enemy.health -= self.gun_damage
+                    enemy.health -= (self.gun_damage * self.damage_multiplier)
             else:
                 self.start_reload()
                 break

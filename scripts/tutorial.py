@@ -1,43 +1,58 @@
 import pygame
+import os
 from menu import Button
 
 class Tutorial:
     def __init__(self):
-        self.font_title = pygame.font.SysFont("Arial", 28, bold=True)
-        self.font_btn = pygame.font.SysFont("Arial", 16)
-        self.font_text = pygame.font.SysFont("Arial", 11)
+        self.font_btn = pygame.font.SysFont("Arial", 12)
 
-        self.title = self.font_title.render("Tutorial", True, (255, 200, 50))
-        self.btn_back = Button(110, 148, 100, 22, "Back", self.font_btn)
+        # Načtení a škálování všech vrstev na rozměr 320x180
+        here = os.path.dirname(os.path.abspath(__file__))
+        assets_dir = os.path.join(here, "..", "assets")
 
-        self.guide_lines = [
-            "L Key  - Light Attack (Low damage / Fast)",
-            "M Key  - Medium Attack (Moderate damage)",
-            "H Key  - Heavy Attack (High damage / Burst)",
-            "R Key  - Reload current firearm",
-            "E Key  - Pick up spawned abilities",
-            "Level Up freezes game to choose an upgrade."
+        def load_layer(filename):
+            path = os.path.join(assets_dir, filename)
+            # Pokud by soubor ještě neexistoval (např. tutorial_2.png), vytvoří se prázdná průhledná plocha
+            if os.path.exists(path):
+                img = pygame.image.load(path).convert_alpha()
+            else:
+                img = pygame.Surface((320, 180), pygame.SRCALPHA)
+            return pygame.transform.scale(img, (320, 180))
+
+        self.bg_book = load_layer("old_book.png")
+        self.pages = [
+            load_layer("tutorial_1.png"),
+            load_layer("tutorial_1.png")
         ]
 
+        self.current_page = 0  # 0 = První strana, 1 = Druhá strana
+
+        # Tlačítka vpravo dole (rozvrženo vedle sebe)
+        # Celková plocha: šířka 320, výška 180
+        self.btn_page = Button(195, 154, 48, 18, "Next >", self.font_btn)
+        self.btn_back = Button(245, 154, 48, 18, "Back", self.font_btn)
+
     def update(self, mouse_pos, mouse_clicked):
+        # Přepínání stránek (cyklicky mezi stranou 1 a 2)
+        if self.btn_page.update(mouse_pos, mouse_clicked):
+            self.current_page = (self.current_page + 1) % len(self.pages)
+            self.btn_page.text = "< Prev" if self.current_page == 1 else "Next >"
+
+        # Tlačítko zpět do menu
         if self.btn_back.update(mouse_pos, mouse_clicked):
+            self.current_page = 0
+            self.btn_page.text = "Next >"
             return "BACK"
+
         return None
 
     def draw(self, surface):
-        surface.fill((20, 20, 30))
+        # 1. Podklad knihy (320x180)
+        surface.blit(self.bg_book, (0, 0))
 
-        title_rect = self.title.get_rect(center=(160, 22))
-        surface.blit(self.title, title_rect)
+        # 2. Aktuální vrstva tutorialu (průhledné PNG nad knihou)
+        surface.blit(self.pages[self.current_page], (0, 0))
 
-        # Rámeček
-        box_rect = pygame.Rect(35, 42, 250, 100)
-        pygame.draw.rect(surface, (30, 30, 40), box_rect)
-        pygame.draw.rect(surface, (100, 100, 100), box_rect, width=1)
-
-        # Řádky textu
-        for i, line in enumerate(self.guide_lines):
-            line_surf = self.font_text.render(line, True, (220, 220, 230))
-            surface.blit(line_surf, (42, 48 + i * 15))
-
+        # 3. Tlačítka vpravo dole
+        self.btn_page.draw(surface)
         self.btn_back.draw(surface)

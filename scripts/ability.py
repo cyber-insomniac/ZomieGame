@@ -39,6 +39,8 @@ class ability:
         self.BOMB_IMAGE = pygame.image.load("assets/bomb.png")
         self.DYNAMITE_IMAGE = pygame.image.load("assets/dynamite.png")
         self.GRENADE_IMAGE = pygame.image.load("assets/grenade.png")
+        self.INSTAKILL_IMAGE = pygame.image.load("assets/instakill.png")
+        self.DOUBLEDAMAGE_IMAGE = pygame.image.load("assets/doubledamage.png")
 
     def update(self, dt):   
         # Move ability closer over time
@@ -67,14 +69,15 @@ class ability:
             self.current_image = self.DYNAMITE_IMAGE
         elif self.ability_name == "bomb":
             self.current_image = self.BOMB_IMAGE
-        else:
-             color = (0,255,0)
+        elif self.ability_name == "insta_kill":
+            self.current_image = self.INSTAKILL_IMAGE
+        elif self.ability_name == "double_damage":
+            self.current_image = self.DOUBLEDAMAGE_IMAGE
+        
 
         if self.current_image != None:
              scaled_image = pygame.transform.scale(self.current_image, (self.rect.width, self.rect.height))
              surface.blit(scaled_image, self.rect)
-        else:       
-            pygame.draw.rect(surface, color, self.rect)
 
         
 

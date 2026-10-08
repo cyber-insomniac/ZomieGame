@@ -1,7 +1,33 @@
 import pygame
 import json
 import os
-from menu import Button
+
+class Button:
+    def __init__(self, x, y, width, height, text, font):
+        self.rect = pygame.Rect(x, y, width, height)
+        self.text = text
+        self.font = font
+        
+        # Barvy tlačítek
+        self.color_normal = (70, 70, 70)
+        self.color_text = (255, 255, 255)
+        
+        self.is_hovered = False
+
+    def update(self, mouse_pos, mouse_clicked):
+        self.is_hovered = self.rect.collidepoint(mouse_pos)
+        if self.is_hovered and mouse_clicked:
+            return True
+        return False
+
+    def draw(self, surface):
+        color = self.color_normal
+        pygame.draw.rect(surface, color, self.rect, border_radius=5)
+        pygame.draw.rect(surface, (200, 200, 200), self.rect, width=2, border_radius=5)
+
+        text_surf = self.font.render(self.text, False, self.color_text)
+        text_rect = text_surf.get_rect(center=self.rect.center)
+        surface.blit(text_surf, text_rect)
 
 class Settings:
     # Obtížnost jako mapování čísla na název
@@ -9,7 +35,7 @@ class Settings:
         1: "Easy",
         2: "Medium",
         4: "Hard",
-        32: "Extreme"
+        8: "Extreme"
     }
 
     # Interní rozlišení 320x180 vynásobené měřítkem
@@ -132,7 +158,7 @@ class Settings:
         self.btn_scale.draw(surface)
 
         # Nápověda k restartu hry
-        hint = self.font_hint.render("*Requires game restart to apply scale", False, (140, 140, 150))
+        hint = self.font_hint.render("*Requires game restart", False, (140, 140, 150))
         surface.blit(hint, (160 - hint.get_width() // 2, 131))
 
         # Tlačítko Back
