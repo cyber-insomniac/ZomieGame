@@ -2,32 +2,62 @@
     "melees": [
         {
             "id": 0,
-            "name": "Sword",
+            "name": "Baseball bat",
             "damage": [10,20,40],
-            "image": "assets/melees/sword.png"
+            "image": "assets/melees/baseballbat.png"
         },
         {
             "id": 1,
-            "name": "Axe",
-            "damage": [15,30,50],
-            "image": "assets/melees/axe.png"
+            "name": "Lance",
+            "damage": [12,25,45],
+            "image": "assets/melees/lance.png"
         },
         {
             "id": 2,
-            "name": "Spear",
-            "damage": [20,40,60],
-            "image": "assets/melees/spear.png"
+            "name": "Scimitar",
+            "damage": [15,25,50],
+            "image": "assets/melees/scimitar.png"
         },
         {
             "id": 3,
-            "name": "Katana",
-            "damage": [40,60,100],
-            "image": "assets/melees/katana.png"
+            "name": "Sword",
+            "damage": [18,30,55],
+            "image": "assets/melees/sword.png"
         },
         {
             "id": 4,
+            "name": "Cleaver",
+            "damage": [20,40,60],
+            "image": "assets/melees/cleaver.png"
+        },
+        {
+            "id": 5,
+            "name": "Axe",
+            "damage": [15,40,70],
+            "image": "assets/melees/axe.png"
+        },
+        {
+            "id": 6,
+            "name": "Spear",
+            "damage": [50,80,120],
+            "image": "assets/melees/spear.png"
+        },
+        {
+            "id": 7,
+            "name": "Katana",
+            "damage": [80,100,150],
+            "image": "assets/melees/katana.png"
+        },
+        {
+            "id": 8,
+            "name": "Mace",
+            "damage": [100,150,200],
+            "image": "assets/melees/Mace.png"
+        },
+        {
+            "id": 9,
             "name": "Trident",
-            "damage": [50,90,130],
+            "damage": [150,200,300],
             "image": "assets/melees/trident.png"
         }
     ],
