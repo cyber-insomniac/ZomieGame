@@ -1,6 +1,7 @@
 # Python cache and compiled files
 /scripts/__pycache__/
 /scripts/abilities/__pycache__/
+/saves/
 *.py[cod]
 *$py.class__pycache__/
 *.pyc

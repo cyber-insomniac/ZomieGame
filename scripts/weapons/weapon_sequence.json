@@ -52,7 +52,7 @@
             "id": 8,
             "name": "Mace",
             "damage": [100,150,200],
-            "image": "assets/melees/Mace.png"
+            "image": "assets/melees/mace.png"
         },
         {
             "id": 9,
